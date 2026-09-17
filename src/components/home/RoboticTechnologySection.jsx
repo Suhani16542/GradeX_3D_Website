@@ -1,199 +1,235 @@
-import React, { useState } from 'react';
-import { Section } from '../ui/Section';
+import React, { useRef, useEffect } from 'react';
 import { Button } from '../ui/Button';
-import { TechInternalDuctScene } from '../three/TechInternalDuctScene';
+import { RoboticShowcase3D } from '../three/RoboticShowcase3D';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
-  Cpu,
+  Bot,
+  Gauge,
   Video,
   Sparkles,
-  ShieldCheck,
-  Flame,
-  CheckCircle,
   ArrowRight,
-  Maximize2,
-  Layers,
-  Search
+  ChevronRight,
+  ShieldCheck,
+  CheckCircle2
 } from 'lucide-react';
 
+gsap.registerPlugin(ScrollTrigger);
+
 /**
- * 4. Robotic Technology Section
- * Explains Robotic Kitchen Exhaust Cleaning with Close-Up 3D Internal Duct Cleaning Scene.
+ * Section 2: Robotic Technology Showcase
+ * Clean, balanced 2-column layout:
+ * - LEFT: Headline, description, 3 technology cards (Robotic Cleaning, Digital Grease Measurement, Live Video Evidence), action buttons
+ * - RIGHT: Dedicated 3D Humanoid/Android Robot Showcase with 360° drag orbit and live HUD stats
  */
 export function RoboticTechnologySection() {
-  const [selectedPillar, setSelectedPillar] = useState(0);
+  const sectionRef = useRef(null);
+  const leftColRef = useRef(null);
+  const rightColRef = useRef(null);
 
-  const techPillars = [
+  // EXACTLY 3 Technology Cards
+  const techCards = [
     {
+      id: "tech-01",
+      number: "01",
+      category: "Mechanical Agitation",
+      title: "ROBOTIC CLEANING",
+      description: "Automated 2,400 RPM hydro-scrubbing reaches inaccessible vertical & horizontal ducts.",
+      badge: "2,400 RPM SCRUBBER",
+      icon: Bot,
+      borderClass: "border-amber-400/35 hover:border-amber-400/80",
+      bgClass: "bg-gradient-to-br from-[#14253F]/90 via-[#0C1A2E]/90 to-[#06101E]/90",
+      iconContainer: "bg-amber-400 text-slate-950 shadow-amber-500/20",
+      tagClass: "bg-amber-400/15 text-amber-300 border-amber-400/30",
+      accentColor: "text-amber-400",
+      glowClass: "bg-amber-500/15",
+    },
+    {
+      id: "tech-02",
+      number: "02",
+      category: "Optical Precision",
+      title: "DIGITAL GREASE MEASUREMENT",
+      description: "Objective sub-20 micron magnetic and laser thickness sensors before and after cleaning.",
+      badge: "< 20 µm TOLERANCE",
+      icon: Gauge,
+      borderClass: "border-sky-400/35 hover:border-sky-400/80",
+      bgClass: "bg-gradient-to-br from-[#0E2847]/90 via-[#0A1C33]/90 to-[#06101E]/90",
+      iconContainer: "bg-sky-400 text-slate-950 shadow-sky-500/20",
+      tagClass: "bg-sky-400/15 text-sky-300 border-sky-400/30",
+      accentColor: "text-sky-400",
+      glowClass: "bg-sky-500/15",
+    },
+    {
+      id: "tech-03",
+      number: "03",
+      category: "Digital Verification",
+      title: "LIVE VIDEO EVIDENCE",
+      description: "1080p HD visual survey recordings provide undeniable, timestamped compliance evidence.",
+      badge: "1080P HD SURVEY",
       icon: Video,
-      title: "Remote Optical Crawling & HD Inspection",
-      subtitle: "Navigating unreachable horizontal and vertical duct risers",
-      description: "Our compact tracked crawler enters commercial kitchen exhaust ducts through standard access panels, utilizing 360-degree pan-tilt HD cameras and high-lumen LED illumination to record internal conditions before, during, and after cleaning.",
-      specs: [
-        "Full optical recording of internal duct condition",
-        "Access to duct lengths exceeding 20+ meters from a single access point",
-        "Real-time operator video feed monitoring",
-        "Accurate identification of grease accumulation depth"
-      ]
+      borderClass: "border-emerald-400/35 hover:border-emerald-400/80",
+      bgClass: "bg-gradient-to-br from-[#0B2C24]/90 via-[#081E19]/90 to-[#06101E]/90",
+      iconContainer: "bg-emerald-400 text-slate-950 shadow-emerald-500/20",
+      tagClass: "bg-emerald-400/15 text-emerald-300 border-emerald-400/30",
+      accentColor: "text-emerald-400",
+      glowClass: "bg-emerald-500/15",
     },
-    {
-      icon: Sparkles,
-      title: "Rotary Mechanical Agitation & Chemical Injection",
-      subtitle: "Breaking down hard polymerized grease down to bare metal",
-      description: "Equipped with bi-directional high-torque rotary brush heads and direct food-safe degreasing chemical misting jets, the crawler mechanically agitates and dissolves stubborn carbonized grease layers that cannot be reached manually.",
-      specs: [
-        "Dual counter-rotating scrubbing heads (1,500 RPM)",
-        "Direct chemical delivery to duct sidewalls, ceiling, and base",
-        "Uniform 360-degree cylindrical or rectangular duct coverage",
-        "Safe operation inside stainless steel and galvanized ductwork"
-      ]
-    },
-    {
-      icon: ShieldCheck,
-      title: "AS 1851 Fire Safety & Insurance Compliance",
-      subtitle: "Eliminating combustible fuel loads in high-risk exhaust systems",
-      description: "Commercial kitchen exhaust fires spread rapidly through uncleaned duct risers. Robotic extraction ensures the full duct run is cleared of combustible grease, protecting commercial kitchens against insurance invalidation and fire authority penalties.",
-      specs: [
-        "Targeted compliance with Australian Standard AS 1851 (Section 13)",
-        "Dramatically reduced fire flashover risk in exhaust plenums",
-        "Protection for landlords, building owners, and operating tenants",
-        "Documented proof for insurers, certifiers, and local health officers"
-      ]
-    }
   ];
 
-  const active = techPillars[selectedPillar];
-  const ActiveIcon = active.icon;
+  // GSAP: Smooth subtle entrance reveal
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      if (leftColRef.current) {
+        gsap.fromTo(
+          leftColRef.current,
+          { opacity: 0.2, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.0,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              end: "top 35%",
+              scrub: 1.0,
+            },
+          }
+        );
+      }
+
+      if (rightColRef.current) {
+        gsap.fromTo(
+          rightColRef.current,
+          { opacity: 0.2, scale: 0.95 },
+          {
+            opacity: 1,
+            scale: 1.0,
+            duration: 1.0,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 75%",
+              end: "top 30%",
+              scrub: 1.0,
+            },
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <Section
-      id="robotic-technology"
-      badge="Advanced Innovation"
-      title="Next-Generation Robotic Exhaust Cleaning Technology"
-      subtitle="Eliminating human limitations in confined space cleaning. Our specialized crawler robot delivers deep internal duct degreasing, continuous optical inspection, and indisputable compliance."
-      padding="lg"
-      className="bg-[#050D1A] border-b border-slate-800/80"
+    <section
+      ref={sectionRef}
+      className="relative z-20 w-full py-16 lg:py-24 bg-[#050D1A] overflow-hidden border-b border-slate-800/80"
     >
-      {/* Top 3D Close-Up Simulation */}
-      <div className="mb-14">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-6 space-y-4">
-            <span className="text-xs uppercase font-bold tracking-widest text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20 inline-block">
-              Internal Duct Cleaning Process
-            </span>
-            <h3 className="text-2xl font-bold text-white leading-tight">
-              Direct Mechanical Agitation Inside <span className="text-amber-400">Hard-To-Reach Risers</span>
-            </h3>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Watch our robotic scrubber dissolve and extract thick polymerized grease deposits inside commercial kitchen extraction ductwork. Quad-directional rotary bristles contact every interior face.
-            </p>
-            <div className="grid grid-cols-2 gap-3 pt-2 text-xs text-slate-300 font-mono">
-              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-slate-400 block text-[10px]">SCRUBBING POWER</span>
-                <span className="text-amber-300 font-bold">1,500 RPM Dual Drive</span>
-              </div>
-              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-slate-400 block text-[10px]">ACCESS REACH</span>
-                <span className="text-sky-300 font-bold">20+ Meters per Access</span>
-              </div>
-            </div>
-          </div>
-          <div className="lg:col-span-6 w-full">
-            <TechInternalDuctScene />
-          </div>
-        </div>
-      </div>
+      {/* Ambient Depth Gradients */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[350px] bg-sky-500/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[350px] bg-amber-500/10 blur-[150px] rounded-full pointer-events-none" />
 
-      {/* Engineering Pillars Interactive Tabs */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
-        {/* Left Selector List */}
-        <div className="lg:col-span-4 space-y-3">
-          <p className="text-xs uppercase tracking-widest text-amber-400 font-bold mb-3 px-1">
-            Engineering Pillars:
-          </p>
-
-          {techPillars.map((pillar, idx) => {
-            const Icon = pillar.icon;
-            const isSelected = selectedPillar === idx;
-            return (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setSelectedPillar(idx)}
-                className={`w-full text-left p-4 rounded-xl transition-all duration-300 flex items-start gap-3.5 border cursor-pointer ${
-                  isSelected
-                    ? 'bg-[#0E2442] border-amber-400/50 shadow-lg shadow-amber-500/10'
-                    : 'bg-[#0A192F]/50 hover:bg-[#0A192F] border-slate-800 text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                  isSelected ? 'bg-amber-400 text-slate-950 font-bold' : 'bg-slate-800 text-slate-400'
-                }`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className={`text-sm font-bold ${isSelected ? 'text-white' : 'text-slate-300'}`}>
-                    {pillar.title}
-                  </h4>
-                  <p className="text-xs text-slate-400 mt-1 line-clamp-1">{pillar.subtitle}</p>
-                </div>
-              </button>
-            );
-          })}
-
-          <div className="p-4 rounded-xl bg-amber-400/10 border border-amber-400/20 text-xs text-amber-200 space-y-1">
-            <span className="font-bold block text-amber-300">Western Australia Deployment</span>
-            <p className="text-[11px] text-slate-300 leading-relaxed">
-              Available for scheduled after-hours and emergency deployments across the Perth metropolitan area.
-            </p>
-          </div>
-        </div>
-
-        {/* Right Active Pillar Deep Dive */}
-        <div className="lg:col-span-8">
-          <div className="glass-panel p-8 rounded-2xl border border-slate-700/80 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 font-bold">
-                <ActiveIcon className="w-6 h-6" />
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          
+          {/* ================= LEFT COLUMN: CONTENT, 3 CARDS, BUTTONS ================= */}
+          <div ref={leftColRef} className="lg:col-span-7 flex flex-col space-y-6">
+            
+            {/* 1. Header & Badges */}
+            <div className="space-y-3.5">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 backdrop-blur-md border border-amber-400/30 text-[11px] font-semibold text-amber-300 shadow-lg">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span className="tracking-wide">TECHNOLOGY & PRECISION</span>
               </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400">
-                  Pillar {selectedPillar + 1} of 3
-                </span>
-                <h3 className="text-2xl font-bold text-white">{active.title}</h3>
+
+              <div className="space-y-1">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.08] drop-shadow-2xl font-sans">
+                  ROBOTIC CLEANING.
+                </h2>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black gold-gradient-text tracking-tight uppercase leading-[1.08] drop-shadow-2xl font-sans">
+                  MEASURABLE RESULTS.
+                </h2>
               </div>
+
+              <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal max-w-2xl drop-shadow-md">
+                Grade X eliminates blind spots in commercial exhaust ductwork with high-precision robotic crawlers, digital grease sensors, and HD video verification.
+              </p>
             </div>
 
-            <p className="text-sm text-slate-300 leading-relaxed">
-              {active.description}
-            </p>
+            {/* 2. EXACTLY 3 Technology Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
+              {techCards.map((card) => {
+                const Icon = card.icon;
+                return (
+                  <div
+                    key={card.id}
+                    className="group relative"
+                  >
+                    <div
+                      className={`relative p-4 rounded-2xl backdrop-blur-xl border select-none transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 ${card.borderClass} ${card.bgClass} flex flex-col justify-between min-h-[190px]`}
+                    >
+                      {/* Hover Glow */}
+                      <div
+                        className={`absolute -inset-1 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${card.glowClass}`}
+                      />
 
-            {/* Technical Specifications */}
-            <div className="space-y-3 pt-4 border-t border-slate-800">
-              <h4 className="text-xs uppercase font-bold tracking-wider text-slate-200">
-                Operational Highlights & Capabilities:
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {active.specs.map((spec, sIdx) => (
-                  <div key={sIdx} className="flex items-start gap-2.5 text-xs text-slate-300 bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <span>{spec}</span>
+                      <div className="relative z-10 space-y-2">
+                        {/* Top Row */}
+                        <div className="flex items-center justify-between">
+                          <span className={`text-xs font-mono font-black ${card.accentColor}`}>
+                            {card.number}
+                          </span>
+                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shadow-md ${card.iconContainer}`}>
+                            <Icon className="w-3.5 h-3.5" />
+                          </div>
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="text-xs sm:text-sm font-black text-white tracking-tight uppercase leading-snug group-hover:text-amber-300 transition-colors">
+                          {card.title}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-[11px] text-slate-300 leading-snug line-clamp-3">
+                          {card.description}
+                        </p>
+                      </div>
+
+                      {/* Bottom Badge */}
+                      <div className="relative z-10 pt-2.5 mt-2 border-t border-slate-700/50 flex items-center justify-between text-[9px] font-mono">
+                        <span className={`px-1.5 py-0.5 rounded-full border ${card.tagClass} font-bold uppercase tracking-wider`}>
+                          {card.badge}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-800">
-              <span className="text-xs text-slate-400">
-                Want to see our robotic crawler in action at your venue?
-              </span>
-              <Button to="/contact" variant="gold" size="sm" icon={ArrowRight}>
-                Book a Demonstration & Appraisal
+            {/* 3. Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3.5 pt-2">
+              <Button to="/technology" variant="gold" size="md" icon={ArrowRight} className="shadow-lg shadow-amber-500/20 text-xs py-2.5 px-5 font-bold">
+                EXPLORE ROBOTIC TECH
+              </Button>
+              <Button to="/contact" variant="navy" size="md" icon={ChevronRight} className="text-xs py-2.5 px-5 font-semibold">
+                BOOK A LIVE DEMO
               </Button>
             </div>
+
           </div>
+
+          {/* ================= RIGHT COLUMN: 3D HUMANOID / ROBOT SHOWCASE ================= */}
+          <div ref={rightColRef} className="lg:col-span-5 w-full">
+            <RoboticShowcase3D />
+          </div>
+
         </div>
       </div>
-    </Section>
+    </section>
   );
 }
 

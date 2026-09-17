@@ -1,125 +1,163 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Section } from '../ui/Section';
 import { Button } from '../ui/Button';
+import { MethodologyTunnel3D } from '../three/MethodologyTunnel3D';
 import {
-  ClipboardCheck,
-  ShieldAlert,
   Search,
-  FileText,
+  Gauge,
+  ShieldCheck,
+  Waves,
   Sparkles,
-  CheckSquare,
-  Camera,
+  ClipboardCheck,
+  CheckCircle2,
   FileCheck2,
-  ArrowRight
+  ArrowRight,
+  ChevronRight
 } from 'lucide-react';
 
 /**
- * 8. Cleaning Methodology Section
- * Shows the 8-step systematic commercial cleaning and robotic inspection process.
+ * Section 5: Methodology / How We Work
+ * 8-Step Sequential Process Timeline with 3D Flow Conduit Background
  */
 export function MethodologySection() {
+  const [activeStep, setActiveStep] = useState(0);
+
   const steps = [
     {
       num: "01",
-      icon: ClipboardCheck,
-      title: "Site Assessment",
-      desc: "Initial walkthrough to measure duct linear meters, canopy dimensions, equipment condition, and access openings."
+      icon: Search,
+      title: "Inspection",
+      badge: "Optical Survey",
+      desc: "Comprehensive HD camera survey of hoods, horizontal ducts, vertical risers, and fan housings to map grease distribution."
     },
     {
       num: "02",
-      icon: ShieldAlert,
-      title: "Risk & Access Review",
-      desc: "Reviewing electrical isolation points, rooftop access safety, confined spaces, and task-specific SWMS preparation."
+      icon: Gauge,
+      title: "Grease Measurement",
+      badge: "Pre-Clean Audit",
+      desc: "Calibrated ultrasonic depth gauge sampling to record baseline grease thickness (µm) and fire hazard classification."
     },
     {
       num: "03",
-      icon: Search,
-      title: "Pre-Clean Inspection",
-      desc: "Robotic optical crawler deployment to capture initial video logs and document grease accumulation depth."
+      icon: ShieldCheck,
+      title: "Preparation & Protection",
+      badge: "Kitchen Shielding",
+      desc: "Complete heavy-duty plastic containment shrouding of cooktops, fryers, electrical outlets, and prep surfaces."
     },
     {
       num: "04",
-      icon: FileText,
-      title: "Cleaning Plan",
-      desc: "Selecting targeted food-safe degreasers, mechanical rotary brush attachments, and scheduling staff shift timing."
+      icon: Waves,
+      title: "Steam Wash",
+      badge: "Thermal Degrease",
+      desc: "High-temperature 160°C dry steam application to soften polymerized carbon and emulsify stubborn baked grease."
     },
     {
       num: "05",
       icon: Sparkles,
-      title: "Cleaning Execution",
-      desc: "Deep scraping, robotic scrubbing, chemical washdown, high-temperature steam cleaning, and stainless polishing."
+      title: "Exhaust Cleaning",
+      badge: "Robotic Extraction",
+      desc: "Deployment of our 2,400 RPM robotic rotary scrubber with food-safe chemical misting to scour ductwork down to bare metal."
     },
     {
       num: "06",
-      icon: CheckSquare,
-      title: "Post-Clean Inspection",
-      desc: "Supervisor quality audit examining all interior duct surfaces, fan impellers, and canopy filters down to bare metal."
+      icon: ClipboardCheck,
+      title: "Final Inspection",
+      badge: "Quality Audit",
+      desc: "Supervisor optical inspection across 100% of the duct run to verify complete elimination of combustible fuel loads."
     },
     {
       num: "07",
-      icon: Camera,
-      title: "Digital Evidence",
-      desc: "Capturing timestamped post-clean photos and crawler camera recordings for complete transparency."
+      icon: CheckCircle2,
+      title: "Post-Clean Measurement",
+      badge: "Micron Verification",
+      desc: "Post-service ultrasonic readings confirming grease thickness has been reduced to under 20 µm (AS 1851 Pass)."
     },
     {
       num: "08",
       icon: FileCheck2,
-      title: "Reporting & Recommendations",
-      desc: "Issuing the formal Certificate of Service, shift report, and preventative maintenance recommendations."
+      title: "Digital Reporting",
+      badge: "Compliance Sign-Off",
+      desc: "Immediate delivery of the official AS 1851 Certificate of Service, before/after photo logs, and insurance sign-off package."
     }
   ];
 
   return (
     <Section
       id="methodology"
-      badge="Quality Assurance Framework"
-      title="The Grade X 8-Step Cleaning Methodology"
-      subtitle="A structured, repeatable engineering process that guarantees measurable cleanliness and compliance on every single shift."
+      badge="Engineering Methodology"
+      title="The Grade X 8-Step Kitchen Hygiene Process"
+      subtitle="A structured, repeatable quality assurance framework ensuring total fire safety compliance and audit-ready proof on every shift."
       padding="lg"
-      className="bg-[#050D1A] border-b border-slate-800/80"
+      className="bg-[#0A192F]/60 border-b border-slate-800/80 relative overflow-hidden"
     >
-      {/* Connected 8-Step Grid Layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {/* 3D Flow Conduit Particle Background */}
+      <MethodologyTunnel3D />
+
+      {/* 8-Step Interactive Timeline Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-14 relative z-10">
         {steps.map((step, idx) => {
           const Icon = step.icon;
+          const isActive = activeStep === idx;
           return (
             <div
-              key={idx}
-              className="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-amber-400/40 transition-all duration-300 relative group flex flex-col justify-between"
+              key={step.num}
+              onClick={() => setActiveStep(idx)}
+              className={`p-6 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden backdrop-blur-sm ${
+                isActive
+                  ? 'bg-gradient-to-b from-[#0E2442] to-[#0A192F] border-amber-400/60 shadow-xl shadow-amber-500/15 -translate-y-1.5'
+                  : 'bg-[#050D1A]/80 hover:bg-[#0E2442]/60 border-slate-800 hover:border-amber-400/30'
+              }`}
             >
-              {/* Step Number Top Pill */}
+              {/* Step Header */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xl font-black font-mono gold-gradient-text">
+                  <span className="text-2xl font-black font-mono gold-gradient-text">
                     {step.num}
                   </span>
-                  <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+                  <div
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
+                      isActive
+                        ? 'bg-amber-400 text-slate-950 font-bold shadow-md shadow-amber-500/20 scale-105'
+                        : 'bg-amber-400/10 text-amber-400 border border-amber-400/20 group-hover:scale-105'
+                    }`}
+                  >
                     <Icon className="w-5 h-5" />
                   </div>
                 </div>
 
-                <h3 className="text-base font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">
-                  {step.title}
-                </h3>
+                <div className="text-[10px] uppercase font-mono font-bold tracking-widest text-amber-300 mb-1">
+                  {step.badge}
+                </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <h4 className="text-lg font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">
+                  {step.title}
+                </h4>
+
+                <p className="text-xs text-slate-300 leading-relaxed font-normal">
                   {step.desc}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-800/60 text-[10px] uppercase font-mono tracking-widest text-slate-500">
-                Step {step.num} of 08
+              {/* Progress Footer */}
+              <div className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span>Phase {idx + 1} of 8</span>
+                <span className={isActive ? 'text-amber-400 font-bold' : 'text-slate-500'}>
+                  {isActive ? '● ACTIVE' : '○'}
+                </span>
               </div>
             </div>
           );
         })}
       </div>
 
-      <div className="text-center">
+      {/* Action CTA */}
+      <div className="text-center relative z-10">
         <Button to="/contact" variant="gold" size="lg" icon={ArrowRight}>
-          Book a Step 1 Site Assessment
+          Schedule a Step 1 Site Assessment
         </Button>
       </div>
     </Section>
   );
 }
+
+export default MethodologySection;

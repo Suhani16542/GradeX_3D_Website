@@ -1,21 +1,21 @@
 import React from 'react';
 import { PageMeta } from '../components/common/PageMeta';
 import { HeroSection } from '../components/home/HeroSection';
-import { CompanyIntroSection } from '../components/home/CompanyIntroSection';
 import { RoboticTechnologySection } from '../components/home/RoboticTechnologySection';
-import { HowRobotWorksSection } from '../components/home/HowRobotWorksSection';
-import { BeforeAfterEvidenceSection } from '../components/home/BeforeAfterEvidenceSection';
-import { DigitalEvidenceSection } from '../components/home/DigitalEvidenceSection';
-import { ComplianceWhsSection } from '../components/home/ComplianceWhsSection';
 import { CoreServicesSection } from '../components/home/CoreServicesSection';
-import { IndustriesSection } from '../components/home/IndustriesSection';
+import { DigitalEvidenceSection } from '../components/home/DigitalEvidenceSection';
 import { MethodologySection } from '../components/home/MethodologySection';
 import { CaseStudiesSection } from '../components/home/CaseStudiesSection';
 import { FinalCtaSection } from '../components/home/FinalCtaSection';
 
 /**
- * Grade X Commercial Solutions Pty Ltd - Redesigned Homepage
- * High-end, interactive, cinematic commercial cleaning & robotic kitchen exhaust website.
+ * Grade X Commercial Solutions Pty Ltd - Complete Animated 6-Section Homepage
+ * 1. SECTION 1 — Full-Screen Immersive 3D Commercial Exhaust Duct Cleaning Hero
+ * 2. SECTION 2 — Technology / Robotic Cleaning (3D Interactive Model + 3 Feature Cards)
+ * 3. SECTION 3 — Services (6 Animated Service Cards with 3D Tilt & Micro-Interactions)
+ * 4. SECTION 4 — Digital Evidence & Compliance (Interactive Before/After Wipe & 4 Evidence Cards)
+ * 5. SECTION 5 — Methodology / How We Work (8-Step Sequential Process Timeline)
+ * 6. SECTION 6 — Case Studies & Final Action CTA (Demonstrated Results + High-Impact Quote CTA)
  */
 export function HomePage() {
   return (
@@ -25,40 +25,23 @@ export function HomePage() {
         description="Grade X Commercial Solutions Pty Ltd: Precision commercial cleaning, robotic kitchen exhaust duct cleaning, and verified AS 1851 digital reporting across Perth and Western Australia."
       />
 
-      {/* 1. Premium Hero with 3D Commercial Kitchen & Robotic Scrubber */}
+      {/* SECTION 1 — Full-Screen 3D Duct Cleaning Hero */}
       <HeroSection />
 
-      {/* 2. Company Introduction */}
-      <CompanyIntroSection />
-
-      {/* 3. Robotic Exhaust Cleaning Technology (with 3D Internal Duct Scrubber) */}
+      {/* SECTION 2 — Technology / Robotic Cleaning */}
       <RoboticTechnologySection />
 
-      {/* 4. How The Robot Works (4-Stage Technological Mechanism) */}
-      <HowRobotWorksSection />
-
-      {/* 5. Before and After Cleaning Evidence (Interactive Split Slider) */}
-      <BeforeAfterEvidenceSection />
-
-      {/* 6. Digital Evidence & Reporting (with 3D Digital Compliance Tablet) */}
-      <DigitalEvidenceSection />
-
-      {/* 7. Compliance & WHS Standards */}
-      <ComplianceWhsSection />
-
-      {/* 8. Core Commercial Cleaning Services (12 Categorized Services) */}
+      {/* SECTION 3 — Services (6 Specialized Cards) */}
       <CoreServicesSection />
 
-      {/* 9. Industries We Serve */}
-      <IndustriesSection />
+      {/* SECTION 4 — Digital Evidence & Compliance */}
+      <DigitalEvidenceSection />
 
-      {/* 10. 8-Step Cleaning Methodology */}
+      {/* SECTION 5 — Methodology / How We Work (8-Step Timeline) */}
       <MethodologySection />
 
-      {/* 11. Case Studies & Client Feedback */}
+      {/* SECTION 6 — Case Studies & Final CTA */}
       <CaseStudiesSection />
-
-      {/* 12. Final Get a Quote CTA */}
       <FinalCtaSection />
     </>
   );
