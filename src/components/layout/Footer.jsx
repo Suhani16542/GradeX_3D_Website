@@ -87,20 +87,20 @@ export function Footer() {
       <div className="relative z-10 flex flex-col justify-between">
         
         {/* ================= 2. PRE-FOOTER INTERACTIVE DISPATCH HUB ================= */}
-        <div className="border-b border-slate-800/80 bg-gradient-to-b from-[#081528]/85 via-[#040C18]/90 to-[#020710]/95 backdrop-blur-2xl py-10 lg:py-12">
+        <div className="border-b border-slate-800/80 bg-gradient-to-b from-[#081528]/85 via-[#040C18]/90 to-[#020710]/95 backdrop-blur-2xl py-8 sm:py-10 lg:py-12">
           <Container>
-            <div className="p-7 sm:p-9 lg:p-10 rounded-3xl bg-gradient-to-r from-[#0C1E36]/90 via-[#071324]/90 to-[#0C1E36]/90 border border-amber-400/30 shadow-xl shadow-amber-500/10 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden backdrop-blur-xl">
+            <div className="p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#0C1E36]/90 via-[#071324]/90 to-[#0C1E36]/90 border border-amber-400/30 shadow-xl shadow-amber-500/10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 relative overflow-hidden backdrop-blur-xl">
               
               {/* Ambient Gold Flare */}
               <div className="absolute top-0 right-1/4 w-80 h-80 bg-amber-500/10 blur-[90px] rounded-full pointer-events-none" />
 
-              <div className="space-y-2.5 text-center lg:text-left max-w-2xl relative z-10">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-[11px] font-mono font-bold text-amber-300 shadow-sm">
+              <div className="space-y-2 sm:space-y-2.5 text-center lg:text-left max-w-2xl relative z-10">
+                <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-[10px] sm:text-[11px] font-mono font-bold text-amber-300 shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   <span className="tracking-wide uppercase">PERTH & WA DISPATCH ACTIVE 24/7</span>
                 </div>
                 
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight uppercase font-sans leading-tight">
+                <h3 className="text-xl sm:text-2xl lg:text-4xl font-black text-white tracking-tight uppercase font-sans leading-tight">
                   Ready to elevate your <span className="gold-gradient-text">kitchen compliance?</span>
                 </h3>
                 
@@ -109,23 +109,23 @@ export function Footer() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center justify-center gap-4 shrink-0 relative z-10">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto shrink-0 relative z-10">
                 <a
                   href={brandConfig.contact.phoneHref}
-                  className="group inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-[#091626] hover:bg-[#10243E] text-white font-mono font-bold text-xs border border-slate-700/80 hover:border-amber-400/50 transition-all duration-300 shadow-md hover:-translate-y-0.5"
+                  className="group inline-flex items-center justify-center gap-3 px-5 sm:px-6 py-3.5 rounded-xl sm:rounded-2xl bg-[#091626] hover:bg-[#10243E] text-white font-mono font-bold text-xs border border-slate-700/80 hover:border-amber-400/50 transition-all duration-300 shadow-md hover:-translate-y-0.5 min-h-[44px] touch-target-safe"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-amber-400/15 flex items-center justify-center text-amber-400 group-hover:scale-110 group-hover:bg-amber-400 group-hover:text-slate-950 transition-all">
-                    <Phone className="w-4 h-4" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-amber-400/15 flex items-center justify-center text-amber-400 group-hover:scale-110 group-hover:bg-amber-400 group-hover:text-slate-950 transition-all">
+                    <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
                   <div className="text-left">
                     <div className="text-[9px] font-mono text-slate-400 uppercase leading-none">DIRECT LINE</div>
-                    <div className="text-amber-300 font-bold text-sm leading-tight">{brandConfig.contact.phone}</div>
+                    <div className="text-amber-300 font-bold text-xs sm:text-sm leading-tight">{brandConfig.contact.phone}</div>
                   </div>
                 </a>
 
                 <Link
                   to="/contact"
-                  className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:-translate-y-0.5"
+                  className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-7 py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:-translate-y-0.5 min-h-[44px] touch-target-safe text-center"
                 >
                   <span>GET A COMMERCIAL QUOTE</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
@@ -139,7 +139,7 @@ export function Footer() {
         {/* ================= 3. ACCREDITATIONS & STANDARDS STRIP ================= */}
         <div className="border-b border-slate-800/80 bg-[#030914]/80 py-4.5 backdrop-blur-md">
           <Container>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 items-center">
               {[
                 { label: "AS 1851-2012", desc: "Australian Standards Certified", icon: ShieldCheck, color: "text-emerald-400" },
                 { label: "WHS ACT 2020", desc: "Standardized Safety Protocols", icon: Shield, color: "text-amber-400" },
@@ -148,13 +148,13 @@ export function Footer() {
               ].map((item, idx) => {
                 const ItemIcon = item.icon;
                 return (
-                  <div key={idx} className="flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-[#071324]/50 border border-slate-800/80">
-                    <ItemIcon className={`w-4.5 h-4.5 shrink-0 ${item.color}`} />
+                  <div key={idx} className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3.5 py-2 rounded-xl sm:rounded-2xl bg-[#071324]/50 border border-slate-800/80">
+                    <ItemIcon className={`w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 ${item.color}`} />
                     <div className="min-w-0">
-                      <div className="text-[11px] font-mono font-bold text-white uppercase tracking-tight truncate">
+                      <div className="text-[10px] sm:text-[11px] font-mono font-bold text-white uppercase tracking-tight truncate">
                         {item.label}
                       </div>
-                      <div className="text-[10px] text-slate-400 truncate">
+                      <div className="text-[9px] sm:text-[10px] text-slate-400 truncate">
                         {item.desc}
                       </div>
                     </div>
@@ -166,17 +166,17 @@ export function Footer() {
         </div>
 
         {/* ================= 4. MAIN FOOTER DIRECTORY ================= */}
-        <div className="py-14 sm:py-16 relative">
+        <div className="py-10 sm:py-14 lg:py-16 relative">
           
           {/* Giant Watermark Typography in Background - Lifted Comfortably from Bottom */}
-          <div className="absolute bottom-8 sm:bottom-12 right-0 flex items-end justify-end pointer-events-none select-none opacity-[0.08] overflow-hidden pr-4 sm:pr-8 leading-none">
+          <div className="absolute bottom-6 sm:bottom-12 right-0 flex items-end justify-end pointer-events-none select-none opacity-[0.06] overflow-hidden pr-3 sm:pr-8 leading-none max-w-full">
             <span className="text-[14vw] font-black uppercase tracking-tighter text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.2)] select-none pointer-events-none leading-none">
               GRADEX
             </span>
           </div>
 
           <Container className="relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-12">
               
               {/* Brand & Corporate Credentials Column */}
               <div className="lg:col-span-2 space-y-5">

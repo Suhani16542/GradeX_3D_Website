@@ -177,12 +177,15 @@ function DynamicPointTelemetry({ mouseRef, count = 1500 }) {
   );
 }
 
+import { useResponsive } from '../../hooks/useResponsive';
+
 /**
  * DigitalEvidenceParticleBg Component
  * Full-bleed WebGL particle background for Section 4
  */
 export function DigitalEvidenceParticleBg({ mouse }) {
   const mouseRef = useRef({ x: 0, y: 0 });
+  const { isMobile } = useResponsive();
 
   useEffect(() => {
     mouseRef.current = mouse;
@@ -191,20 +194,20 @@ export function DigitalEvidenceParticleBg({ mouse }) {
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-[#030812] via-[#050D1A] to-[#030812]">
       {/* Soft atmospheric fog glows */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[350px] bg-sky-500/10 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[350px] bg-amber-500/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[300px] sm:w-[500px] h-[250px] sm:h-[350px] bg-sky-500/10 blur-[120px] sm:blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[300px] sm:w-[500px] h-[250px] sm:h-[350px] bg-amber-500/10 blur-[120px] sm:blur-[150px] rounded-full pointer-events-none" />
 
       <Canvas
-        camera={{ position: [0, 0, 9], fov: 55 }}
+        camera={{ position: [0, 0, 9], fov: isMobile ? 60 : 55 }}
         gl={{
-          antialias: true,
+          antialias: !isMobile,
           alpha: true,
           powerPreference: 'high-performance',
         }}
-        dpr={[1, 1.5]}
+        dpr={isMobile ? [1, 1.25] : [1, 1.5]}
       >
         <fog attach="fog" args={['#030812', 6, 16]} />
-        <DynamicPointTelemetry mouseRef={mouseRef} count={1600} />
+        <DynamicPointTelemetry mouseRef={mouseRef} count={isMobile ? 800 : 1600} />
       </Canvas>
     </div>
   );

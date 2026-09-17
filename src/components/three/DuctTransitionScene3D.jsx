@@ -216,21 +216,28 @@ function TransitionDuctTunnelMesh({ progress }) {
   );
 }
 
+import { useResponsive } from '../../hooks/useResponsive';
+
 /**
  * DuctTransitionScene3D Component
  * Interactive WebGL Canvas with 3D Duct Tunnel & Camera Zoom Effect for Section 4
  */
 export function DuctTransitionScene3D({ progress = 0.5 }) {
+  const { isMobile } = useResponsive();
+
   return (
     <div className="w-full h-full">
       <Canvas
-        camera={{ position: [0, 0, 3.6], fov: 46 }}
+        camera={{
+          position: isMobile ? [0, 0, 4.2] : [0, 0, 3.6],
+          fov: isMobile ? 54 : 46,
+        }}
         gl={{
-          antialias: true,
+          antialias: !isMobile,
           alpha: true,
           powerPreference: 'high-performance',
         }}
-        dpr={[1, 1.5]}
+        dpr={isMobile ? [1, 1.25] : [1, 1.5]}
       >
         <ambientLight intensity={0.65} color="#0B1C33" />
         <directionalLight position={[4, 6, 5]} intensity={1.6} color="#FFFFFF" />

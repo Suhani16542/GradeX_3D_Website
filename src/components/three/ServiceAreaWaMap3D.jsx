@@ -1,6 +1,7 @@
 import React, { useRef, useMemo, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { useResponsive } from '../../hooks/useResponsive';
 
 /**
  * 3D Western Australia & Perth Operations Visualization for Section 7
@@ -16,7 +17,7 @@ import * as THREE from 'three';
  *   5. DIGITAL REPORTING
  * - Camera travels from broad WA overview toward Perth focus on scroll
  */
-function WaTerrainScene({ scrollProgress = 0, activeNode, onNodeClick }) {
+function WaTerrainScene({ scrollProgress = 0, activeNode, onNodeClick, isMobile, isSmallMobile }) {
   const terrainGroupRef = useRef();
   const perthBeaconRef = useRef();
   const raysRef = useRef([]);
@@ -93,9 +94,9 @@ function WaTerrainScene({ scrollProgress = 0, activeNode, onNodeClick }) {
       // Rotate and tilt from broad angle to focused Perth perspective
       const targetRotX = 0.55 - scrollProgress * 0.2;
       const targetRotY = -0.15 + scrollProgress * 0.25;
-      const targetZ = -0.5 + scrollProgress * 1.8;
-      const targetX = 0.4 + scrollProgress * 1.2;
-      const targetY = -0.2 + scrollProgress * 1.0;
+      const targetZ = isMobile ? (-0.2 + scrollProgress * 1.2) : (-0.5 + scrollProgress * 1.8);
+      const targetX = isMobile ? (0.1 + scrollProgress * 0.6) : (0.4 + scrollProgress * 1.2);
+      const targetY = isMobile ? (0.2 + scrollProgress * 0.6) : (-0.2 + scrollProgress * 1.0);
 
       terrainGroupRef.current.rotation.x = THREE.MathUtils.damp(terrainGroupRef.current.rotation.x, targetRotX, 3.0, delta);
       terrainGroupRef.current.rotation.y = THREE.MathUtils.damp(terrainGroupRef.current.rotation.y, targetRotY, 3.0, delta);
@@ -112,7 +113,7 @@ function WaTerrainScene({ scrollProgress = 0, activeNode, onNodeClick }) {
   });
 
   return (
-    <group ref={terrainGroupRef} position={[0.4, -0.2, -0.5]} rotation={[0.55, -0.15, 0]}>
+    <group ref={terrainGroupRef} position={isMobile ? [0.1, 0.2, -0.2] : [0.4, -0.2, -0.5]} rotation={[0.55, -0.15, 0]}>
       {/* 1. Raised Western Australia Titanium Terrain */}
       <mesh geometry={terrainGeom} castShadow receiveShadow>
         <meshStandardMaterial
@@ -207,6 +208,16 @@ export function ServiceAreaWaMap3D({
   activeNode = 'exhaust',
   onNodeClick,
 }) {
+  const { isMobile, isSmallMobile } = useResponsive();
+
+  const cameraPos = useMemo(() => {
+    if (isSmallMobile) return [0, -0.3, 9.4];
+    if (isMobile) return [0, -0.2, 8.6];
+    return [0, 0, 7.2];
+  }, [isMobile, isSmallMobile]);
+
+  const fov = isSmallMobile ? 54 : isMobile ? 50 : 46;
+
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-[#030712] via-[#050D1A] to-[#02050B]">
       {/* Soft Regional Glow Highlights */}
@@ -214,13 +225,13 @@ export function ServiceAreaWaMap3D({
       <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[400px] bg-sky-500/10 blur-[180px] rounded-full pointer-events-none" />
 
       <Canvas
-        camera={{ position: [0, 0, 7.2], fov: 46 }}
+        camera={{ position: cameraPos, fov }}
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: 'high-performance',
         }}
-        dpr={[1, 1.5]}
+        dpr={isMobile ? [1, 1.25] : [1, 1.5]}
       >
         <ambientLight intensity={0.65} color="#0B1C33" />
         <directionalLight position={[5, 8, 6]} intensity={1.6} color="#FFFFFF" />
@@ -230,6 +241,8 @@ export function ServiceAreaWaMap3D({
             scrollProgress={scrollProgress}
             activeNode={activeNode}
             onNodeClick={onNodeClick}
+            isMobile={isMobile}
+            isSmallMobile={isSmallMobile}
           />
         </React.Suspense>
       </Canvas>

@@ -14,18 +14,21 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+import { useResponsive } from '../../hooks/useResponsive';
+
 gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Section 2: Robotic Technology Showcase
- * Clean, balanced 2-column layout:
- * - LEFT: Headline, description, 3 technology cards (Robotic Cleaning, Digital Grease Measurement, Live Video Evidence), action buttons
- * - RIGHT: Dedicated 3D Humanoid/Android Robot Showcase with 360° drag orbit and live HUD stats
+ * Responsive layout:
+ * - Desktop: 2-column side-by-side (Left: Text & 3 Cards, Right: 3D Robot)
+ * - Mobile: Vertical Stack (Heading -> 3D Robot Scene -> 3 Technology Cards -> CTAs)
  */
 export function RoboticTechnologySection() {
   const sectionRef = useRef(null);
   const leftColRef = useRef(null);
   const rightColRef = useRef(null);
+  const { isMobile } = useResponsive();
 
   // EXACTLY 3 Technology Cards
   const techCards = [
@@ -76,11 +79,13 @@ export function RoboticTechnologySection() {
     },
   ];
 
-  // GSAP: Smooth subtle entrance reveal
+  // GSAP: Smooth subtle entrance reveal using matchMedia
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 1024px)", () => {
       if (leftColRef.current) {
         gsap.fromTo(
           leftColRef.current,
@@ -118,53 +123,75 @@ export function RoboticTechnologySection() {
           }
         );
       }
-    }, sectionRef);
+    });
 
-    return () => ctx.revert();
+    mm.add("(max-width: 1023px)", () => {
+      gsap.fromTo(
+        sectionRef.current,
+        { opacity: 0.8 },
+        {
+          opacity: 1,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (
     <section
       ref={sectionRef}
       id="technology"
-      className="relative z-20 w-full py-16 lg:py-24 bg-[#050D1A] overflow-hidden border-t border-slate-700/60 border-b border-slate-800/80 shadow-[0_-30px_90px_rgba(0,0,0,0.95)]"
+      className="relative z-20 w-full py-14 sm:py-20 lg:py-28 bg-[#050D1A] overflow-hidden border-t border-slate-700/60 border-b border-slate-800/80 shadow-[0_-30px_90px_rgba(0,0,0,0.95)]"
     >
       {/* Top Subtle Amber Border Flare */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent pointer-events-none" />
 
       {/* Ambient Depth Gradients */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[350px] bg-sky-500/10 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[350px] bg-amber-500/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[300px] sm:w-[500px] h-[300px] sm:h-[350px] bg-sky-500/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[300px] sm:w-[500px] h-[300px] sm:h-[350px] bg-amber-500/10 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-12 items-center">
           
-          {/* ================= LEFT COLUMN: CONTENT, 3 CARDS, BUTTONS ================= */}
-          <div ref={leftColRef} className="lg:col-span-7 flex flex-col space-y-6">
+          {/* ================= LEFT / DESKTOP CONTENT / MOBILE CONTAINER ================= */}
+          <div ref={leftColRef} className="lg:col-span-7 flex flex-col space-y-6 order-1">
             
             {/* 1. Header & Badges */}
-            <div className="space-y-3.5">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 backdrop-blur-md border border-amber-400/30 text-[11px] font-semibold text-amber-300 shadow-lg">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span className="tracking-wide">TECHNOLOGY & PRECISION</span>
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 backdrop-blur-md border border-amber-400/30 text-[10px] sm:text-[11px] font-semibold text-amber-300 shadow-lg">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span className="tracking-wide uppercase">TECHNOLOGY & PRECISION</span>
               </div>
 
               <div className="space-y-1">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.08] drop-shadow-2xl font-sans">
+                <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.08] drop-shadow-2xl font-sans">
                   ROBOTIC CLEANING.
                 </h2>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black gold-gradient-text tracking-tight uppercase leading-[1.08] drop-shadow-2xl font-sans">
+                <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black gold-gradient-text tracking-tight uppercase leading-[1.08] drop-shadow-2xl font-sans">
                   MEASURABLE RESULTS.
                 </h2>
               </div>
 
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal max-w-2xl drop-shadow-md">
+              <p className="text-xs sm:text-sm lg:text-base text-slate-300 leading-relaxed font-normal max-w-2xl drop-shadow-md">
                 Grade X eliminates blind spots in commercial exhaust ductwork with high-precision robotic crawlers, digital grease sensors, and HD video verification.
               </p>
             </div>
 
+            {/* Mobile-Only 3D Robot Insertion in Visual Flow */}
+            <div className="block lg:hidden w-full my-2">
+              <RoboticShowcase3D />
+            </div>
+
             {/* 2. EXACTLY 3 Technology Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1 sm:pt-2">
               {techCards.map((card) => {
                 const Icon = card.icon;
                 return (
@@ -173,7 +200,7 @@ export function RoboticTechnologySection() {
                     className="group relative"
                   >
                     <div
-                      className={`relative p-4 rounded-2xl backdrop-blur-xl border select-none transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 ${card.borderClass} ${card.bgClass} flex flex-col justify-between min-h-[190px]`}
+                      className={`relative p-4 sm:p-4.5 rounded-2xl backdrop-blur-xl border select-none transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 ${card.borderClass} ${card.bgClass} flex flex-col justify-between min-h-[160px] sm:min-h-[190px]`}
                     >
                       {/* Hover Glow */}
                       <div
@@ -203,7 +230,7 @@ export function RoboticTechnologySection() {
                       </div>
 
                       {/* Bottom Badge */}
-                      <div className="relative z-10 pt-2.5 mt-2 border-t border-slate-700/50 flex items-center justify-between text-[9px] font-mono">
+                      <div className="relative z-10 pt-2 mt-2 border-t border-slate-700/50 flex items-center justify-between text-[9px] font-mono">
                         <span className={`px-1.5 py-0.5 rounded-full border ${card.tagClass} font-bold uppercase tracking-wider`}>
                           {card.badge}
                         </span>
@@ -215,19 +242,19 @@ export function RoboticTechnologySection() {
             </div>
 
             {/* 3. Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-2">
-              <Button to="/technology" variant="gold" size="md" icon={ArrowRight} className="shadow-lg shadow-amber-500/20 text-xs py-2.5 px-5 font-bold">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+              <Button to="/technology" variant="gold" size="md" icon={ArrowRight} className="shadow-lg shadow-amber-500/20 text-xs py-3 px-5 font-bold min-h-[44px] justify-center">
                 EXPLORE ROBOTIC TECH
               </Button>
-              <Button to="/contact" variant="navy" size="md" icon={ChevronRight} className="text-xs py-2.5 px-5 font-semibold">
+              <Button to="/contact" variant="navy" size="md" icon={ChevronRight} className="text-xs py-3 px-5 font-semibold min-h-[44px] justify-center">
                 BOOK A LIVE DEMO
               </Button>
             </div>
 
           </div>
 
-          {/* ================= RIGHT COLUMN: 3D HUMANOID / ROBOT SHOWCASE ================= */}
-          <div ref={rightColRef} className="lg:col-span-5 w-full">
+          {/* ================= RIGHT COLUMN: 3D HUMANOID / ROBOT SHOWCASE (Desktop) ================= */}
+          <div ref={rightColRef} className="hidden lg:block lg:col-span-5 w-full order-2">
             <RoboticShowcase3D />
           </div>
 

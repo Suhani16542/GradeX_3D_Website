@@ -33,20 +33,54 @@
   --color-brand-slate-900: #0F172A;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   color-scheme: dark;
 }
 
-body {
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
   margin: 0;
-  background-color: var(--color-brand-navy-950);
-  color: var(--color-brand-slate-100);
-  font-family: var(--font-sans);
+  padding: 0;
   overflow-x: hidden;
+  background-color: #050D1A;
+  color: #F1F5F9;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure all sections have solid dark navy backgrounds even if WebGL takes time to mount */
+section {
+  position: relative;
+  background-color: #050D1A;
+  overflow-x: clip;
+}
+
+/* Three.js canvas responsive defaults */
+canvas {
+  display: block;
+  touch-action: pan-y;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Mobile-safe touch target utility */
+.touch-target-safe {
+  min-height: 44px;
+  min-width: 44px;
 }
 
 /* Glassmorphism utility */

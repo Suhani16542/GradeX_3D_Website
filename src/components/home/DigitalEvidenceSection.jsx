@@ -17,6 +17,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
+import { useResponsive } from '../../hooks/useResponsive';
+
 gsap.registerPlugin(ScrollTrigger);
 
 /**
@@ -29,6 +31,7 @@ export function DigitalEvidenceSection() {
   const visualContainerRef = useRef(null);
   const cardsRef = useRef([]);
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const { isMobile, isSmallMobile } = useResponsive();
   
   // Interactive transition slider (0 = Before, 1 = After)
   const [sliderProgress, setSliderProgress] = useState(0.45);
@@ -70,7 +73,7 @@ export function DigitalEvidenceSection() {
       number: "02",
       icon: Camera,
       title: "BEFORE / AFTER PHOTOS",
-      description: "Visual evidence showing the cleaning result.",
+      description: "Visual evidence showing the verified cleaning result.",
       badge: "HIGH-RES CAPTURE",
       metric: "100% Optical Verification",
       status: "Timestamped & Geotagged",
@@ -86,7 +89,7 @@ export function DigitalEvidenceSection() {
       number: "03",
       icon: Video,
       title: "LIVE VIDEO EVIDENCE",
-      description: "Inspection and cleaning video evidence.",
+      description: "Internal duct inspection and rotary cleaning video records.",
       badge: "1080P HD RECORDING",
       metric: "Internal Duct Survey",
       status: "Zero Blind-Spots",
@@ -102,7 +105,7 @@ export function DigitalEvidenceSection() {
       number: "04",
       icon: FileCheck2,
       title: "DIGITAL SERVICE REPORT",
-      description: "Service areas, inspections, measurements and maintenance recommendations.",
+      description: "Service areas, inspections, measurements and compliance recommendations.",
       badge: "AS 1851 CERTIFICATE",
       metric: "Instant Shift PDF Delivery",
       status: "Insurance Ready",
@@ -115,18 +118,20 @@ export function DigitalEvidenceSection() {
     },
   ];
 
-  // GSAP 3D Heading & Scroll Scrub Timeline
+  // GSAP 3D Heading & Scroll Scrub Timeline with matchMedia
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // 1. 3D Heading Assembly (CSS3D Periodic Table Inspired)
+    const mm = gsap.matchMedia();
+
+    // 1. Desktop Animation
+    mm.add("(min-width: 1024px)", () => {
       const validWords = wordRefs.current.filter(Boolean);
       if (validWords.length > 0) {
-        gsap.set(validWords[0], { x: -80, y: -40, z: 120, rotateX: 25, rotateY: -30, opacity: 0 });
-        gsap.set(validWords[1], { x: 80, y: -30, z: -100, rotateX: -20, rotateY: 35, opacity: 0 });
-        gsap.set(validWords[2], { x: -70, y: 40, z: -80, rotateX: 30, rotateY: 20, opacity: 0 });
-        gsap.set(validWords[3], { x: 70, y: 50, z: 100, rotateX: -25, rotateY: -25, opacity: 0 });
+        gsap.set(validWords[0], { x: -60, y: -30, z: 80, rotateX: 20, rotateY: -20, opacity: 0 });
+        gsap.set(validWords[1], { x: 60, y: -20, z: -60, rotateX: -15, rotateY: 25, opacity: 0 });
+        gsap.set(validWords[2], { x: -50, y: 30, z: -50, rotateX: 20, rotateY: 15, opacity: 0 });
+        gsap.set(validWords[3], { x: 50, y: 35, z: 70, rotateX: -20, rotateY: -20, opacity: 0 });
 
         gsap.to(validWords, {
           x: 0,
@@ -135,8 +140,8 @@ export function DigitalEvidenceSection() {
           rotateX: 0,
           rotateY: 0,
           opacity: 1,
-          duration: 1.0,
-          stagger: 0.12,
+          duration: 0.9,
+          stagger: 0.1,
           ease: "power3.out",
           clearProps: "transform",
           scrollTrigger: {
@@ -147,11 +152,10 @@ export function DigitalEvidenceSection() {
         });
       }
 
-      // 2. Main Visual Entrance
       if (visualContainerRef.current) {
         gsap.fromTo(
           visualContainerRef.current,
-          { opacity: 0, y: 40, scale: 0.96 },
+          { opacity: 0, y: 40, scale: 0.97 },
           {
             opacity: 1,
             y: 0,
@@ -166,7 +170,6 @@ export function DigitalEvidenceSection() {
           }
         );
 
-        // Scroll scrub advances Before/After transition and 3D zoom through duct
         ScrollTrigger.create({
           trigger: visualContainerRef.current,
           start: "top 65%",
@@ -180,7 +183,6 @@ export function DigitalEvidenceSection() {
         });
       }
 
-      // 3. Evidence Cards Sequential Entrance
       const validCards = cardsRef.current.filter(Boolean);
       if (validCards.length > 0) {
         gsap.fromTo(
@@ -190,7 +192,7 @@ export function DigitalEvidenceSection() {
             opacity: 1,
             y: 0,
             duration: 0.8,
-            stagger: 0.14,
+            stagger: 0.12,
             ease: "power3.out",
             clearProps: "transform",
             scrollTrigger: {
@@ -201,9 +203,54 @@ export function DigitalEvidenceSection() {
           }
         );
       }
-    }, sectionRef);
+    });
 
-    return () => ctx.revert();
+    // 2. Mobile/Tablet Animation
+    mm.add("(max-width: 1023px)", () => {
+      const validWords = wordRefs.current.filter(Boolean);
+      if (validWords.length > 0) {
+        gsap.fromTo(
+          validWords,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.08,
+            ease: "power2.out",
+            clearProps: "transform",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      const validCards = cardsRef.current.filter(Boolean);
+      if (validCards.length > 0) {
+        gsap.fromTo(
+          validCards,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: "power2.out",
+            clearProps: "transform",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 60%",
+              once: true,
+            },
+          }
+        );
+      }
+    });
+
+    return () => mm.revert();
   }, [isDragging]);
 
   const handleSliderChange = (e) => {
@@ -216,26 +263,26 @@ export function DigitalEvidenceSection() {
       id="digital-evidence"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full py-20 lg:py-28 bg-[#040A14] overflow-hidden border-b border-slate-800/80 flex flex-col justify-center"
+      className="relative w-full py-16 sm:py-24 lg:py-32 bg-[#040A14] overflow-hidden border-b border-slate-800/80 flex flex-col justify-center"
     >
       {/* ================= LAYER 0: THREE.JS DYNAMIC WEBGL PARTICLE BACKGROUND ================= */}
       <DigitalEvidenceParticleBg mouse={mouse} />
 
       {/* ================= FOREGROUND LAYERS (z-10+ above particles) ================= */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 flex flex-col space-y-12 lg:space-y-16">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 flex flex-col space-y-10 sm:space-y-14 lg:space-y-16">
         
         {/* ================= LAYER 2: 3D HEADING ANIMATION ================= */}
-        <div className="text-center max-w-3xl mx-auto space-y-4" style={{ perspective: '1200px' }}>
+        <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4" style={{ perspective: '1200px' }}>
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 backdrop-blur-md border border-amber-400/30 text-[11px] font-semibold text-amber-300 shadow-lg">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 backdrop-blur-md border border-amber-400/30 text-[10px] sm:text-[11px] font-semibold text-amber-300 shadow-lg">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span className="tracking-wide uppercase">MEASURABLE COMPLIANCE & EVIDENCE</span>
           </div>
 
-          {/* 3D Assembling Headline */}
+          {/* Assembling Headline */}
           <div className="space-y-1 select-none">
             {/* Line 1 */}
-            <div className="flex items-center justify-center gap-2.5 sm:gap-3.5 text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.08] font-sans">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3.5 text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.08] font-sans">
               <span ref={(el) => (wordRefs.current[0] = el)} className="inline-block transform-gpu">
                 DIGITAL
               </span>
@@ -245,7 +292,7 @@ export function DigitalEvidenceSection() {
             </div>
 
             {/* Line 2 */}
-            <div className="flex items-center justify-center gap-2.5 sm:gap-3.5 text-3xl sm:text-4xl lg:text-5xl font-black gold-gradient-text tracking-tight uppercase leading-[1.08] font-sans">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3.5 text-2xl sm:text-4xl lg:text-5xl font-black gold-gradient-text tracking-tight uppercase leading-[1.08] font-sans">
               <span ref={(el) => (wordRefs.current[2] = el)} className="inline-block transform-gpu">
                 PROVEN
               </span>
@@ -264,68 +311,73 @@ export function DigitalEvidenceSection() {
         {/* ================= LAYER 3 & 4: MAIN 3D DUCT ZOOM BEFORE/AFTER & MEASUREMENT HUD ================= */}
         <div
           ref={visualContainerRef}
-          className="relative max-w-5xl mx-auto w-full rounded-3xl overflow-hidden border border-amber-400/35 shadow-2xl bg-gradient-to-b from-[#0A1628]/95 via-[#06101E]/95 to-[#030812]/95 p-4 sm:p-6 space-y-4"
+          className="relative max-w-5xl mx-auto w-full rounded-3xl overflow-hidden border border-amber-400/35 shadow-2xl bg-gradient-to-b from-[#0A1628]/95 via-[#06101E]/95 to-[#030812]/95 p-3.5 sm:p-5 lg:p-6 space-y-3 sm:space-y-4"
         >
           {/* Top HUD Telemetry Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono border-b border-slate-800 pb-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 text-[10px] sm:text-[11px] font-mono border-b border-slate-800 pb-3">
             {/* Left: Pre-Clean Status */}
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
+              <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
                 BEFORE: PRE-CLEAN
               </span>
-              <span className="text-slate-400 hidden sm:inline">
-                Initial Grease: <strong className="text-rose-300">1,850 µm</strong>
+              <span className="text-slate-400 hidden xs:inline">
+                <strong className="text-rose-300">1,850 µm</strong>
               </span>
             </div>
 
             {/* Center: Live Removal Meter */}
-            <div className="flex items-center gap-2 bg-slate-950/80 px-3 py-1 rounded-xl border border-slate-800 text-[10px]">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-slate-300 font-bold">
-                CLEANING PROGRESS: {Math.round(sliderProgress * 100)}%
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-slate-950/80 px-2.5 sm:px-3 py-1 rounded-xl border border-slate-800 text-[9px] sm:text-[10px]">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="text-slate-300 font-bold truncate">
+                PROGRESS: {Math.round(sliderProgress * 100)}%
               </span>
             </div>
 
             {/* Right: Post-Clean Status */}
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 hidden sm:inline">
-                Post-Clean: <strong className="text-emerald-400">&lt; 18 µm</strong>
+              <span className="text-slate-400 hidden xs:inline">
+                <strong className="text-emerald-400">&lt; 18 µm</strong>
               </span>
-              <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+              <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
                 AFTER: AS 1851 PASS
               </span>
             </div>
           </div>
 
           {/* WebGL 3D Shader Transition Viewport with 3D Duct Tunnel & Camera Zoom */}
-          <div className="relative w-full h-[320px] sm:h-[420px] lg:h-[480px] rounded-2xl overflow-hidden border border-slate-700/60 bg-black group select-none shadow-inner">
+          <div
+            style={{
+              height: 'clamp(280px, 70vw, 480px)',
+            }}
+            className="relative w-full rounded-2xl overflow-hidden border border-slate-700/60 bg-black group select-none shadow-inner"
+          >
             <DuctTransitionScene3D progress={sliderProgress} />
 
             {/* Left Image Badge (Before) */}
             <div
-              className="absolute top-4 left-4 pointer-events-none transition-opacity duration-300"
+              className="absolute top-3 left-3 sm:top-4 sm:left-4 pointer-events-none transition-opacity duration-300"
               style={{ opacity: Math.max(0.1, 1 - sliderProgress * 1.5) }}
             >
-              <div className="bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-rose-500/40 text-[11px] font-mono text-rose-300 space-y-0.5 shadow-xl">
+              <div className="bg-slate-950/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-rose-500/40 text-[10px] sm:text-[11px] font-mono text-rose-300 space-y-0.5 shadow-xl">
                 <p className="font-bold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-rose-500" />
+                  <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-rose-500" />
                   BEFORE EXTRACTION
                 </p>
-                <p className="text-[10px] text-slate-400">Severe Carbon & Grease Buildup</p>
+                <p className="text-[9px] sm:text-[10px] text-slate-400 hidden xs:block">Severe Grease Buildup</p>
               </div>
             </div>
 
             {/* Right Image Badge (After) */}
             <div
-              className="absolute top-4 right-4 pointer-events-none transition-opacity duration-300 text-right"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 pointer-events-none transition-opacity duration-300 text-right"
               style={{ opacity: Math.max(0.1, (sliderProgress - 0.2) * 1.5) }}
             >
-              <div className="bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/40 text-[11px] font-mono text-emerald-300 space-y-0.5 shadow-xl">
+              <div className="bg-slate-950/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-emerald-500/40 text-[10px] sm:text-[11px] font-mono text-emerald-300 space-y-0.5 shadow-xl">
                 <p className="font-bold flex items-center justify-end gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <CheckCircle2 className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-emerald-400" />
                   AFTER RESTORATION
                 </p>
-                <p className="text-[10px] text-slate-400">Spotless Mirror Stainless Steel</p>
+                <p className="text-[9px] sm:text-[10px] text-slate-400 hidden xs:block">Spotless Stainless Steel</p>
               </div>
             </div>
 
@@ -334,8 +386,8 @@ export function DigitalEvidenceSection() {
               className="absolute top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 via-cyan-400 to-amber-400 pointer-events-none shadow-[0_0_15px_rgba(56,189,248,0.8)]"
               style={{ left: `${sliderProgress * 100}%` }}
             >
-              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 text-slate-950 flex items-center justify-center shadow-2xl border-2 border-white">
-                <Sliders className="w-4 h-4 rotate-90" />
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 sm:w-8 h-7 sm:h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 text-slate-950 flex items-center justify-center shadow-2xl border-2 border-white">
+                <Sliders className="w-3.5 sm:w-4 h-3.5 sm:h-4 rotate-90" />
               </div>
             </div>
 
@@ -349,22 +401,23 @@ export function DigitalEvidenceSection() {
               onChange={handleSliderChange}
               onMouseDown={() => setIsDragging(true)}
               onMouseUp={() => setIsDragging(false)}
+              onTouchStart={() => setIsDragging(true)}
+              onTouchEnd={() => setIsDragging(false)}
               className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30"
-              aria-label="Drag or scroll Before/After transition slider"
+              aria-label="Drag Before/After transition slider"
             />
           </div>
 
           {/* Bottom Telemetry HUD Slider Bar (Layer 4) */}
-          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono bg-slate-950/80 p-3 sm:p-4 rounded-2xl border border-slate-800">
+          <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 text-xs font-mono bg-slate-950/80 p-3 sm:p-4 rounded-2xl border border-slate-800">
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 text-[11px]">SCROLL OR DRAG SLIDER:</span>
-              <span className="text-amber-400 font-bold text-[11px]">
-                {sliderProgress < 0.3 ? 'BEFORE: 1,850 µm (Heavy Buildup)' : sliderProgress > 0.7 ? 'AFTER: < 18 µm (Restored)' : 'TRANSFORMATION IN PROGRESS...'}
+              <span className="text-slate-400 text-[10px] sm:text-[11px]">SLIDER:</span>
+              <span className="text-amber-400 font-bold text-[10px] sm:text-[11px]">
+                {sliderProgress < 0.3 ? 'BEFORE: 1,850 µm' : sliderProgress > 0.7 ? 'AFTER: < 18 µm (PASSED)' : 'CLEANING IN PROGRESS...'}
               </span>
             </div>
 
-            <div className="flex items-center gap-4 text-[11px]">
-              <span className="text-slate-400 hidden sm:inline">Tolerance: &lt; 20 µm</span>
+            <div className="flex items-center gap-3 text-[10px] sm:text-[11px]">
               <span className="text-emerald-400 font-bold flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" /> AS 1851 PASS
               </span>
@@ -373,7 +426,7 @@ export function DigitalEvidenceSection() {
         </div>
 
         {/* ================= LAYER 5: EXACTLY 4 EVIDENCE CARDS ================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {evidenceCards.map((card, idx) => {
             const Icon = card.icon;
             return (
@@ -383,14 +436,14 @@ export function DigitalEvidenceSection() {
                 className="group relative"
               >
                 <div
-                  className={`relative p-5 sm:p-6 rounded-2xl backdrop-blur-xl border select-none transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 ${card.borderClass} ${card.bgClass} flex flex-col justify-between min-h-[200px] sm:min-h-[220px]`}
+                  className={`relative p-5 sm:p-6 rounded-2xl backdrop-blur-xl border select-none transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.01] hover:-translate-y-1 ${card.borderClass} ${card.bgClass} flex flex-col justify-between min-h-[180px] sm:min-h-[210px]`}
                 >
                   {/* Subtle Hover Glow */}
                   <div
                     className={`absolute -inset-1 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${card.glowClass}`}
                   />
 
-                  <div className="relative z-10 space-y-3">
+                  <div className="relative z-10 space-y-2.5 sm:space-y-3">
                     {/* Top Row: Number & Icon */}
                     <div className="flex items-center justify-between">
                       <span className={`text-xs font-mono font-black ${card.accentColor}`}>
@@ -428,11 +481,11 @@ export function DigitalEvidenceSection() {
         </div>
 
         {/* ================= BOTTOM ACTION CTA ================= */}
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-          <Button to="/compliance" variant="gold" size="md" icon={ArrowRight} className="shadow-lg shadow-amber-500/20 text-xs py-2.5 px-6 font-bold">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 pt-2">
+          <Button to="/compliance" variant="gold" size="md" icon={ArrowRight} className="shadow-lg shadow-amber-500/20 text-xs py-3 px-6 font-bold min-h-[44px] justify-center">
             VIEW SAMPLE AUDIT REPORT
           </Button>
-          <Button to="/contact" variant="navy" size="md" icon={ChevronRight} className="text-xs py-2.5 px-6 font-semibold">
+          <Button to="/contact" variant="navy" size="md" icon={ChevronRight} className="text-xs py-3 px-6 font-semibold min-h-[44px] justify-center">
             BOOK A COMPLIANCE INSPECTION
           </Button>
         </div>

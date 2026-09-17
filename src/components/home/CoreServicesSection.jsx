@@ -17,22 +17,18 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+import { useResponsive } from '../../hooks/useResponsive';
+
 gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Section 3: Core Services Section
  * Features:
  * 1. Full section Interactive WebGL Particle Background (Three.js Points, BufferGeometry, damped mouse interaction)
- * 2. Clean, minimal, premium typography
- * 3. EXACTLY 6 normal service cards in a balanced layout:
- *    - Left Side: Cards 1, 2, 3
- *    - Center: Visual breathing space showcasing the interactive particle cloud
- *    - Right Side: Cards 4, 5, 6
- * 4. ONE-SHOT cinematic entry animation:
- *    - Left cards enter smoothly from x: -120px -> 0
- *    - Right cards enter smoothly from x: +120px -> 0
- *    - Staggered and slow (duration: 0.9s, stagger: 0.15s, ease: power3.out)
- * 5. Stable resting state: Once cards enter, animation stops permanently. No zoom/disappearing.
+ * 2. Responsive Layout:
+ *    - Desktop: Left 3 Cards + Center Focal Pillar + Right 3 Cards
+ *    - Mobile: Clean 1-Column Sequential Card Stack with smooth vertical reveal
+ * 3. Responsive GSAP ScrollTrigger via matchMedia (no horizontal overflow on mobile)
  */
 export function CoreServicesSection() {
   const sectionRef = useRef(null);
@@ -41,6 +37,7 @@ export function CoreServicesSection() {
   const rightCardsRef = useRef([]);
   const centerPillarRef = useRef(null);
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const { isMobile } = useResponsive();
 
   // Normalized mouse coordinates for interactive particle field
   const handleMouseMove = (e) => {
@@ -152,12 +149,14 @@ export function CoreServicesSection() {
     },
   ];
 
-  // GSAP: Entry animation triggered once when Section 3 scrolls into view
+  // GSAP: Responsive animation setup via matchMedia
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // 1. Heading entrance
+    const mm = gsap.matchMedia();
+
+    // 1. Desktop Animation (> 1024px)
+    mm.add("(min-width: 1024px)", () => {
       if (headingRef.current) {
         gsap.fromTo(
           headingRef.current,
@@ -176,19 +175,18 @@ export function CoreServicesSection() {
         );
       }
 
-      // 2. Left Cards: Enter from LEFT (x: -120 -> 0)
       const validLeftCards = leftCardsRef.current.filter(Boolean);
       if (validLeftCards.length > 0) {
         gsap.fromTo(
           validLeftCards,
-          { opacity: 0, x: -120 },
+          { opacity: 0, x: -100 },
           {
             opacity: 1,
             x: 0,
-            duration: 0.9,
-            stagger: 0.15,
+            duration: 0.8,
+            stagger: 0.12,
             ease: "power3.out",
-            clearProps: "transform", // Clear transforms once settled so CSS hover is 100% stable
+            clearProps: "transform",
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 70%",
@@ -198,19 +196,18 @@ export function CoreServicesSection() {
         );
       }
 
-      // 3. Right Cards: Enter from RIGHT (x: +120 -> 0)
       const validRightCards = rightCardsRef.current.filter(Boolean);
       if (validRightCards.length > 0) {
         gsap.fromTo(
           validRightCards,
-          { opacity: 0, x: 120 },
+          { opacity: 0, x: 100 },
           {
             opacity: 1,
             x: 0,
-            duration: 0.9,
-            stagger: 0.15,
+            duration: 0.8,
+            stagger: 0.12,
             ease: "power3.out",
-            clearProps: "transform", // Clear transforms once settled
+            clearProps: "transform",
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 70%",
@@ -220,7 +217,6 @@ export function CoreServicesSection() {
         );
       }
 
-      // 4. Center breathing space subtle fade
       if (centerPillarRef.current) {
         gsap.fromTo(
           centerPillarRef.current,
@@ -228,7 +224,7 @@ export function CoreServicesSection() {
           {
             opacity: 1,
             scale: 1,
-            duration: 1.0,
+            duration: 0.9,
             ease: "power3.out",
             scrollTrigger: {
               trigger: sectionRef.current,
@@ -238,47 +234,72 @@ export function CoreServicesSection() {
           }
         );
       }
-    }, sectionRef);
+    });
 
-    return () => ctx.revert();
+    // 2. Mobile/Tablet Animation (< 1024px) - Vertical only, no horizontal overflow
+    mm.add("(max-width: 1023px)", () => {
+      const allCards = [...leftCardsRef.current, ...rightCardsRef.current].filter(Boolean);
+      if (allCards.length > 0) {
+        gsap.fromTo(
+          allCards,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            stagger: 0.1,
+            ease: "power2.out",
+            clearProps: "transform",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 75%",
+              once: true,
+            },
+          }
+        );
+      }
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (
     <section
       ref={sectionRef}
+      id="services"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative z-20 w-full min-h-screen py-20 lg:py-28 bg-[#030712] overflow-hidden flex flex-col justify-center border-b border-slate-800/80"
+      className="relative z-20 w-full py-16 sm:py-24 lg:py-32 bg-[#030712] overflow-hidden flex flex-col justify-center border-b border-slate-800/80"
     >
       {/* ================= 1. FULL SECTION THREE.JS PARTICLE BACKGROUND ================= */}
       <InteractiveParticleBackground mouse={mouse} />
 
       {/* ================= 2. CONTENT CONTAINER (z-index: 10 above particles) ================= */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 flex flex-col space-y-12 lg:space-y-16">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 flex flex-col space-y-10 sm:space-y-14 lg:space-y-16">
         
         {/* Section Heading */}
         <div ref={headingRef} className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 backdrop-blur-md border border-amber-400/30 text-[11px] font-semibold text-amber-300 shadow-lg">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 backdrop-blur-md border border-amber-400/30 text-[10px] sm:text-[11px] font-semibold text-amber-300 shadow-lg">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span className="tracking-wide uppercase">PRECISION CLEANING SOLUTIONS</span>
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.08] font-sans">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.08] font-sans">
               OUR <span className="gold-gradient-text">SERVICES</span>
             </h2>
           </div>
 
-          <p className="text-sm sm:text-base text-slate-300 font-normal leading-relaxed max-w-xl mx-auto drop-shadow-md">
-            Professional commercial cleaning, engineered for precision.
+          <p className="text-xs sm:text-sm lg:text-base text-slate-300 font-normal leading-relaxed max-w-xl mx-auto drop-shadow-md">
+            Professional commercial kitchen hygiene and industrial cleaning, engineered for precision.
           </p>
         </div>
 
         {/* ================= 3. BALANCED 6-CARD COMPOSITION ================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-stretch">
           
-          {/* LEFT SIDE: Cards 1, 2, 3 (Enter from LEFT) */}
-          <div className="lg:col-span-5 flex flex-col space-y-4 sm:space-y-5">
+          {/* LEFT SIDE: Cards 1, 2, 3 */}
+          <div className="md:col-span-1 lg:col-span-5 flex flex-col space-y-4 sm:space-y-5">
             {leftServices.map((card, idx) => {
               const Icon = card.icon;
               return (
@@ -288,7 +309,7 @@ export function CoreServicesSection() {
                   className="group relative"
                 >
                   <div
-                    className={`relative p-5 sm:p-6 rounded-2xl backdrop-blur-xl border select-none transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 ${card.borderClass} ${card.bgClass} flex flex-col justify-between min-h-[140px] sm:min-h-[150px]`}
+                    className={`relative p-5 sm:p-6 rounded-2xl backdrop-blur-xl border select-none transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.01] hover:-translate-y-1 ${card.borderClass} ${card.bgClass} flex flex-col justify-between min-h-[140px] sm:min-h-[150px]`}
                   >
                     {/* Hover Glow */}
                     <div
@@ -307,7 +328,7 @@ export function CoreServicesSection() {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-base sm:text-lg font-black text-white tracking-tight uppercase leading-snug group-hover:text-amber-300 transition-colors">
+                      <h3 className="text-sm sm:text-base lg:text-lg font-black text-white tracking-tight uppercase leading-snug group-hover:text-amber-300 transition-colors">
                         {card.title}
                       </h3>
 
@@ -332,7 +353,7 @@ export function CoreServicesSection() {
             })}
           </div>
 
-          {/* CENTER: Visual Breathing Space / Central Interactive Focal Pillar */}
+          {/* CENTER: Visual Breathing Space / Central Interactive Focal Pillar (Desktop only) */}
           <div
             ref={centerPillarRef}
             className="lg:col-span-2 hidden lg:flex flex-col items-center justify-center py-6 px-4 rounded-3xl border border-slate-800/80 bg-slate-950/40 backdrop-blur-md text-center space-y-6 relative overflow-hidden"
@@ -379,8 +400,8 @@ export function CoreServicesSection() {
             </div>
           </div>
 
-          {/* RIGHT SIDE: Cards 4, 5, 6 (Enter from RIGHT) */}
-          <div className="lg:col-span-5 flex flex-col space-y-4 sm:space-y-5">
+          {/* RIGHT SIDE: Cards 4, 5, 6 */}
+          <div className="md:col-span-1 lg:col-span-5 flex flex-col space-y-4 sm:space-y-5">
             {rightServices.map((card, idx) => {
               const Icon = card.icon;
               return (
@@ -390,7 +411,7 @@ export function CoreServicesSection() {
                   className="group relative"
                 >
                   <div
-                    className={`relative p-5 sm:p-6 rounded-2xl backdrop-blur-xl border select-none transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 ${card.borderClass} ${card.bgClass} flex flex-col justify-between min-h-[140px] sm:min-h-[150px]`}
+                    className={`relative p-5 sm:p-6 rounded-2xl backdrop-blur-xl border select-none transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.01] hover:-translate-y-1 ${card.borderClass} ${card.bgClass} flex flex-col justify-between min-h-[140px] sm:min-h-[150px]`}
                   >
                     {/* Hover Glow */}
                     <div
@@ -409,7 +430,7 @@ export function CoreServicesSection() {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-base sm:text-lg font-black text-white tracking-tight uppercase leading-snug group-hover:text-amber-300 transition-colors">
+                      <h3 className="text-sm sm:text-base lg:text-lg font-black text-white tracking-tight uppercase leading-snug group-hover:text-amber-300 transition-colors">
                         {card.title}
                       </h3>
 
@@ -436,12 +457,24 @@ export function CoreServicesSection() {
 
         </div>
 
+        {/* Mobile/Tablet Central Standards Bar (Compact) */}
+        <div className="flex lg:hidden flex-wrap items-center justify-around gap-4 p-4 rounded-2xl bg-[#061122]/90 border border-slate-800 backdrop-blur-md text-center">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-amber-400" />
+            <span className="text-xs font-mono font-bold text-white uppercase">AS 1851-2012 VERIFIED</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs font-mono text-slate-300">PERTH & WA COVERAGE</span>
+          </div>
+        </div>
+
         {/* ================= 4. BOTTOM ACTION CTA ================= */}
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-          <Button to="/services" variant="gold" size="md" icon={ArrowRight} className="shadow-lg shadow-amber-500/20 text-xs py-2.5 px-6 font-bold">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 pt-2">
+          <Button to="/services" variant="gold" size="md" icon={ArrowRight} className="shadow-lg shadow-amber-500/20 text-xs py-3 px-6 font-bold min-h-[44px] justify-center">
             VIEW ALL DETAILED SERVICES
           </Button>
-          <Button to="/contact" variant="navy" size="md" icon={ChevronRight} className="text-xs py-2.5 px-6 font-semibold">
+          <Button to="/contact" variant="navy" size="md" icon={ChevronRight} className="text-xs py-3 px-6 font-semibold min-h-[44px] justify-center">
             REQUEST A CUSTOM QUOTE
           </Button>
         </div>

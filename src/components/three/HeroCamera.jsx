@@ -10,10 +10,10 @@ import * as THREE from 'three';
  * - Smooth mouse X/Y damping (slow, subtle, no aggressive spinning)
  * - 5-Stage Story Sequence (Inspection -> Approach -> Cleaning -> Verification -> Clean Result)
  */
-export function HeroCamera({ progress = 0, mouse = { x: 0, y: 0 }, robotZ = 0 }) {
+export function HeroCamera({ progress = 0, mouse = { x: 0, y: 0 }, robotZ = 0, isMobile = false }) {
   const { camera } = useThree();
-  const currentPos = useRef(new THREE.Vector3(0.2, 0.45, -5.2));
-  const currentLookAt = useRef(new THREE.Vector3(0.35, 0.1, 1.0));
+  const currentPos = useRef(new THREE.Vector3(isMobile ? 0.0 : 0.2, 0.45, -5.2));
+  const currentLookAt = useRef(new THREE.Vector3(isMobile ? 0.0 : 0.35, 0.1, 1.0));
 
   // Compute keyframe camera positions and targets based on progress (0.0 to 1.0)
   const getCameraKeyframe = (p) => {
@@ -21,52 +21,57 @@ export function HeroCamera({ progress = 0, mouse = { x: 0, y: 0 }, robotZ = 0 })
     let targetCamPos = new THREE.Vector3();
     let targetLookPos = new THREE.Vector3();
 
+    // Mobile centering factor: slightly reduced X offset so robot stays centered
+    const xMult = isMobile ? 0.45 : 1.0;
+    const zOffset = isMobile ? -0.8 : 0.0;
+    const yOffset = isMobile ? 0.12 : 0.0;
+
     if (t <= 0.25) {
       // SCENE 01 — INSPECTION: Camera behind robot in dark greased duct
       const k = t / 0.25;
       targetCamPos.set(
-        THREE.MathUtils.lerp(0.2, 0.45, k),
-        THREE.MathUtils.lerp(0.42, 0.35, k),
-        robotZ + THREE.MathUtils.lerp(-4.2, -3.2, k)
+        THREE.MathUtils.lerp(0.1 * xMult, 0.35 * xMult, k),
+        THREE.MathUtils.lerp(0.42 + yOffset, 0.38 + yOffset, k),
+        robotZ + THREE.MathUtils.lerp(-4.2 + zOffset, -3.2 + zOffset, k)
       );
-      targetLookPos.set(0.35, 0.15, robotZ + 1.2);
+      targetLookPos.set(0.15 * xMult, 0.18, robotZ + 1.2);
     } else if (t <= 0.55) {
       // SCENE 02/03 — APPROACH & ACTIVE ROTARY CLEANING: Camera glides alongside tracked chassis
       const k = (t - 0.25) / 0.3;
       targetCamPos.set(
-        THREE.MathUtils.lerp(0.45, 0.95, k),
-        THREE.MathUtils.lerp(0.35, 0.25, k),
-        robotZ + THREE.MathUtils.lerp(-3.2, -1.2, k)
+        THREE.MathUtils.lerp(0.35 * xMult, 0.65 * xMult, k),
+        THREE.MathUtils.lerp(0.38 + yOffset, 0.28 + yOffset, k),
+        robotZ + THREE.MathUtils.lerp(-3.2 + zOffset, -1.4 + zOffset, k)
       );
       targetLookPos.set(
-        THREE.MathUtils.lerp(0.35, 0.45, k),
-        0.18,
+        THREE.MathUtils.lerp(0.15 * xMult, 0.25 * xMult, k),
+        0.2,
         robotZ + THREE.MathUtils.lerp(1.2, 1.6, k)
       );
     } else if (t <= 0.8) {
       // SCENE 04 — VERIFICATION: Clean stainless steel gleaming surface revealed
       const k = (t - 0.55) / 0.25;
       targetCamPos.set(
-        THREE.MathUtils.lerp(0.95, 0.75, k),
-        THREE.MathUtils.lerp(0.25, 0.45, k),
-        robotZ + THREE.MathUtils.lerp(-1.2, -2.2, k)
+        THREE.MathUtils.lerp(0.65 * xMult, 0.5 * xMult, k),
+        THREE.MathUtils.lerp(0.28 + yOffset, 0.48 + yOffset, k),
+        robotZ + THREE.MathUtils.lerp(-1.4 + zOffset, -2.2 + zOffset, k)
       );
       targetLookPos.set(
-        0.4,
-        0.2,
+        0.2 * xMult,
+        0.22,
         robotZ + THREE.MathUtils.lerp(1.6, 2.0, k)
       );
     } else {
       // SCENE 05 — CLEAN RESULT: Stable wide cinematic framing of pristine clean duct & machine
       const k = (t - 0.8) / 0.2;
       targetCamPos.set(
-        THREE.MathUtils.lerp(0.75, 0.55, k),
-        THREE.MathUtils.lerp(0.45, 0.5, k),
-        robotZ + THREE.MathUtils.lerp(-2.2, -3.0, k)
+        THREE.MathUtils.lerp(0.5 * xMult, 0.35 * xMult, k),
+        THREE.MathUtils.lerp(0.48 + yOffset, 0.52 + yOffset, k),
+        robotZ + THREE.MathUtils.lerp(-2.2 + zOffset, -3.0 + zOffset, k)
       );
       targetLookPos.set(
-        0.35,
-        0.2,
+        0.15 * xMult,
+        0.22,
         robotZ + THREE.MathUtils.lerp(2.0, 2.2, k)
       );
     }

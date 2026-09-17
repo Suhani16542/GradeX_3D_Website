@@ -90,34 +90,34 @@ export function Header() {
         <div className="flex lg:hidden items-center gap-2">
           <a
             href={brandConfig.contact.phoneHref}
-            className="p-2 rounded-lg bg-slate-800 text-amber-400 border border-amber-400/30"
+            className="w-10 h-10 rounded-xl bg-slate-800 text-amber-400 border border-amber-400/30 flex items-center justify-center min-w-[40px] min-h-[40px] touch-target-safe"
             aria-label="Call Grade X"
           >
             <Phone className="w-4 h-4" />
           </a>
-          <Button to="/contact" size="sm" variant="gold" className="px-3 py-1.5 text-xs">
+          <Button to="/contact" size="sm" variant="gold" className="px-3 py-2 text-xs min-h-[40px] flex items-center touch-target-safe">
             Quote
           </Button>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+            className="w-10 h-10 rounded-xl text-slate-300 hover:text-white bg-slate-800/80 border border-slate-700/60 flex items-center justify-center transition cursor-pointer min-w-[40px] min-h-[40px] touch-target-safe"
             aria-label="Toggle navigation menu"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </Container>
 
       {/* Mobile dropdown menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0A192F] border-b border-amber-500/20 px-4 pt-2 pb-6 space-y-1 max-h-[80vh] overflow-y-auto">
+        <div className="lg:hidden bg-[#0A192F] border-b border-amber-500/20 px-4 pt-2 pb-6 space-y-1.5 max-h-[80vh] overflow-y-auto shadow-2xl">
           <div className="py-2.5 mb-2 border-b border-slate-800 text-xs text-slate-300 flex flex-col gap-1">
             <span className="text-amber-400 font-semibold">{brandConfig.companyName} (WA)</span>
             <div className="flex items-center justify-between text-[11px] text-slate-400">
               <span>{brandConfig.contact.address.suburb}, {brandConfig.contact.address.state}</span>
               <a href={brandConfig.contact.phoneHref} className="text-amber-300 font-bold flex items-center gap-1">
-                <Phone className="w-3 h-3" /> {brandConfig.contact.phone}
+                <Phone className="w-3.5 h-3.5" /> {brandConfig.contact.phone}
               </a>
             </div>
           </div>
@@ -127,10 +127,10 @@ export function Header() {
               to={item.path}
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `block px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
+                `flex items-center px-4 py-3 rounded-xl text-xs font-medium transition min-h-[44px] ${
                   isActive
                     ? 'bg-amber-400/15 text-amber-300 font-semibold border border-amber-400/30'
-                    : 'text-slate-200 hover:bg-slate-800 hover:text-white'
+                    : 'text-slate-200 hover:bg-slate-800/80 hover:text-white'
                 }`
               }
             >

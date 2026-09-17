@@ -265,25 +265,37 @@ function HolographicShieldScene({ activeCard = 0, hoveredCard = null, mouse }) {
   );
 }
 
+import { useResponsive } from '../../hooks/useResponsive';
+
 /**
  * Compliance3DShield Canvas Wrapper Component
  */
 export function Compliance3DShield({ activeCard = 0, hoveredCard = null, mouse }) {
+  const { isMobile } = useResponsive();
+
   return (
-    <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[480px] flex items-center justify-center pointer-events-none select-none">
+    <div
+      style={{
+        height: 'clamp(280px, 68vw, 460px)',
+      }}
+      className="relative w-full flex items-center justify-center pointer-events-none select-none"
+    >
       {/* Ambient Multi-Layer Radial Glow Behind Shield */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-gradient-to-tr from-amber-500/20 via-emerald-500/15 to-sky-500/15 blur-[80px] pointer-events-none animate-pulse" />
+        <div className="w-48 sm:w-64 lg:w-80 h-48 sm:h-64 lg:h-80 rounded-full bg-gradient-to-tr from-amber-500/20 via-emerald-500/15 to-sky-500/15 blur-[60px] sm:blur-[80px] pointer-events-none animate-pulse" />
       </div>
 
       <Canvas
-        camera={{ position: [0, 0, 5.2], fov: 45 }}
+        camera={{
+          position: isMobile ? [0, 0, 5.8] : [0, 0, 5.2],
+          fov: isMobile ? 50 : 45,
+        }}
         gl={{
-          antialias: true,
+          antialias: !isMobile,
           alpha: true,
           powerPreference: 'high-performance',
         }}
-        dpr={[1, 1.5]}
+        dpr={isMobile ? [1, 1.25] : [1, 1.5]}
       >
         <ambientLight intensity={0.8} color="#0B1C33" />
         <directionalLight position={[4, 6, 5]} intensity={2.2} color="#FFFFFF" />

@@ -201,12 +201,15 @@ function PipelineConduitScene({ scrollProgress = 0, mouseRef, activeStep = 0 }) 
   );
 }
 
+import { useResponsive } from '../../hooks/useResponsive';
+
 /**
  * Methodology3DFullBg Component
  * Full-bleed WebGL 3D Background for Section 5
  */
 export function Methodology3DFullBg({ scrollProgress = 0, mouse, activeStep = 0 }) {
   const mouseRef = useRef({ x: 0, y: 0 });
+  const { isMobile } = useResponsive();
 
   useEffect(() => {
     mouseRef.current = mouse;
@@ -215,8 +218,8 @@ export function Methodology3DFullBg({ scrollProgress = 0, mouse, activeStep = 0 
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-[#020610] via-[#040C18] to-[#02050B]">
       {/* Soft Regional Atmospheric Glows */}
-      <div className="absolute top-1/6 left-1/4 w-[600px] h-[400px] bg-amber-500/10 blur-[180px] rounded-full pointer-events-none" />
-      <div className="absolute top-2/3 right-1/4 w-[600px] h-[400px] bg-emerald-500/10 blur-[180px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/6 left-1/4 w-[300px] sm:w-[600px] h-[250px] sm:h-[400px] bg-amber-500/10 blur-[120px] sm:blur-[180px] rounded-full pointer-events-none" />
+      <div className="absolute top-2/3 right-1/4 w-[300px] sm:w-[600px] h-[250px] sm:h-[400px] bg-emerald-500/10 blur-[120px] sm:blur-[180px] rounded-full pointer-events-none" />
 
       {/* Subtle Coordinate Grid Texture */}
       <div
@@ -228,13 +231,13 @@ export function Methodology3DFullBg({ scrollProgress = 0, mouse, activeStep = 0 
       />
 
       <Canvas
-        camera={{ position: [0, 0, 8.2], fov: 48 }}
+        camera={{ position: [0, 0, 8.2], fov: isMobile ? 55 : 48 }}
         gl={{
-          antialias: true,
+          antialias: !isMobile,
           alpha: true,
           powerPreference: 'high-performance',
         }}
-        dpr={[1, 1.5]}
+        dpr={isMobile ? [1, 1.25] : [1, 1.5]}
       >
         <ambientLight intensity={0.65} color="#0B1C33" />
         <directionalLight position={[6, 8, 6]} intensity={1.7} color="#FFFFFF" />

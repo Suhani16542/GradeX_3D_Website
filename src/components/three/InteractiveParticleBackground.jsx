@@ -150,12 +150,15 @@ function ParticleCloud({ mouseRef, count = 2000 }) {
   );
 }
 
+import { useResponsive } from '../../hooks/useResponsive';
+
 /**
  * InteractiveParticleBackground Component
  * Full-bleed WebGL particle background for Section 3
  */
 export function InteractiveParticleBackground({ mouse }) {
   const mouseRef = useRef({ x: 0, y: 0 });
+  const { isMobile } = useResponsive();
 
   useEffect(() => {
     mouseRef.current = mouse;
@@ -164,19 +167,19 @@ export function InteractiveParticleBackground({ mouse }) {
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-[#030712] via-[#050D1A] to-[#030712]">
       {/* Deep Atmospheric Glow Gradients */}
-      <div className="absolute top-1/4 left-1/3 w-[600px] h-[400px] bg-sky-500/10 blur-[160px] rounded-full" />
-      <div className="absolute bottom-1/4 right-1/3 w-[600px] h-[400px] bg-amber-500/10 blur-[160px] rounded-full" />
+      <div className="absolute top-1/4 left-1/3 w-[300px] sm:w-[600px] h-[300px] sm:h-[400px] bg-sky-500/10 blur-[120px] sm:blur-[160px] rounded-full" />
+      <div className="absolute bottom-1/4 right-1/3 w-[300px] sm:w-[600px] h-[300px] sm:h-[400px] bg-amber-500/10 blur-[120px] sm:blur-[160px] rounded-full" />
 
       <Canvas
-        camera={{ position: [0, 0, 10], fov: 60 }}
+        camera={{ position: [0, 0, 10], fov: isMobile ? 65 : 60 }}
         gl={{
-          antialias: true,
+          antialias: !isMobile,
           alpha: true,
           powerPreference: 'high-performance',
         }}
-        dpr={[1, 1.5]}
+        dpr={isMobile ? [1, 1.25] : [1, 1.5]}
       >
-        <ParticleCloud mouseRef={mouseRef} count={2200} />
+        <ParticleCloud mouseRef={mouseRef} count={isMobile ? 1200 : 2200} />
       </Canvas>
     </div>
   );

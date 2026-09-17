@@ -391,45 +391,57 @@ function HumanoidCleaningRobot() {
   );
 }
 
+import { useResponsive } from '../../hooks/useResponsive';
+
 /**
  * RoboticShowcase3D Component
- * Interactive WebGL Canvas for Section 2 (Right Column)
+ * Interactive WebGL Canvas for Section 2
  */
 export function RoboticShowcase3D() {
+  const { isMobile, isSmallMobile } = useResponsive();
+
   return (
-    <div className="relative w-full h-[460px] sm:h-[540px] lg:h-[580px] rounded-3xl overflow-hidden border border-amber-400/30 shadow-2xl bg-gradient-to-b from-[#0B1728]/95 via-[#07111E]/95 to-[#040A14]/95 flex flex-col justify-between group">
+    <div
+      style={{
+        height: 'clamp(320px, 75vw, 540px)',
+      }}
+      className="relative w-full rounded-3xl overflow-hidden border border-amber-400/30 shadow-2xl bg-gradient-to-b from-[#0B1728]/95 via-[#07111E]/95 to-[#040A14]/95 flex flex-col justify-between group select-none"
+    >
       {/* Ambient Lighting Gradients */}
-      <div className="absolute -top-24 -left-24 w-64 h-64 bg-amber-500/15 blur-[90px] rounded-full pointer-events-none" />
-      <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-sky-500/15 blur-[90px] rounded-full pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-48 sm:w-64 h-48 sm:h-64 bg-amber-500/15 blur-[80px] rounded-full pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 w-48 sm:w-64 h-48 sm:h-64 bg-sky-500/15 blur-[80px] rounded-full pointer-events-none" />
 
       {/* Top HUD Status Bar */}
-      <div className="relative z-10 p-4 flex items-center justify-between pointer-events-none">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-800/80 text-[11px] font-mono">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-amber-300 font-bold tracking-wider">GX-ANDROID 800</span>
+      <div className="relative z-10 p-3 sm:p-4 flex items-center justify-between pointer-events-none gap-2">
+        <div className="flex items-center gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-slate-950/85 backdrop-blur-md border border-slate-800/80 text-[10px] sm:text-[11px] font-mono">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <span className="text-amber-300 font-bold tracking-wider truncate">GX-ANDROID 800</span>
         </div>
 
-        <div className="flex items-center gap-2 text-[10px] font-mono text-sky-300 bg-sky-950/60 px-2.5 py-1 rounded-full border border-sky-500/30 backdrop-blur-md">
+        <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-mono text-sky-300 bg-sky-950/70 px-2 sm:px-2.5 py-1 rounded-full border border-sky-500/30 backdrop-blur-md shrink-0">
           <span>TORQUE: 2,400 RPM</span>
         </div>
       </div>
 
       {/* Interactive 3D Canvas with Orbit Controls */}
-      <div className="relative flex-1 w-full h-full cursor-grab active:cursor-grabbing">
+      <div className="relative flex-1 w-full h-full cursor-grab active:cursor-grabbing touch-pan-y">
         <Canvas
-          shadows
-          camera={{ position: [2.2, 1.4, 3.2], fov: 42 }}
+          shadows={!isMobile}
+          camera={{
+            position: isMobile ? [2.8, 1.4, 3.8] : [2.2, 1.4, 3.2],
+            fov: isMobile ? 48 : 42,
+          }}
           gl={{
-            antialias: true,
+            antialias: !isMobile,
             alpha: true,
             toneMapping: THREE.ACESFilmicToneMapping,
             toneMappingExposure: 1.25,
           }}
-          dpr={[1, 1.5]}
+          dpr={isMobile ? [1, 1.25] : [1, 2]}
         >
           <ambientLight intensity={0.7} color="#0B1C33" />
           <hemisphereLight skyColor="#38BDF8" groundColor="#0A192F" intensity={0.9} />
-          <directionalLight position={[4, 5, 4]} intensity={1.8} color="#FFFFFF" castShadow />
+          <directionalLight position={[4, 5, 4]} intensity={1.8} color="#FFFFFF" castShadow={!isMobile} />
           <directionalLight position={[-4, 2, -2]} intensity={1.2} color="#F59E0B" />
           <pointLight position={[0, 2, 1.5]} intensity={1.0} color="#38BDF8" />
 
@@ -446,19 +458,20 @@ export function RoboticShowcase3D() {
             maxPolarAngle={Math.PI / 2.1}
             autoRotate
             autoRotateSpeed={0.8}
+            rotateSpeed={isMobile ? 0.6 : 1.0}
           />
         </Canvas>
       </div>
 
       {/* Bottom Interactive HUD Indicator */}
-      <div className="relative z-10 p-4 pt-0 flex items-center justify-between text-[11px] font-mono pointer-events-none">
-        <div className="flex items-center gap-1.5 text-slate-400 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-800">
+      <div className="relative z-10 p-3 sm:p-4 pt-0 flex items-center justify-between text-[10px] sm:text-[11px] font-mono pointer-events-none gap-2">
+        <div className="flex items-center gap-1.5 text-slate-400 bg-slate-950/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-800 shrink-0">
           <span className="text-amber-400 font-bold">AS 1851:</span>
-          <span className="text-emerald-400 font-bold">100% COMPLIANT</span>
+          <span className="text-emerald-400 font-bold">COMPLIANT</span>
         </div>
 
-        <div className="text-slate-400 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-800 text-[10px]">
-          <span>Drag to Rotate 360° ↺</span>
+        <div className="text-slate-400 bg-slate-950/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-800 text-[9px] sm:text-[10px] shrink-0">
+          <span>Drag 360° ↺</span>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { useResponsive } from '../../hooks/useResponsive';
 
 /**
  * 3D Luxury Kinetic Horizon Wave & Constellation Lattice for Footer
@@ -10,14 +11,14 @@ import * as THREE from 'three';
  * - Interactive Mouse Ripple Displacement & Parallax Tilt
  * - Golden, Amber & Cyan energy horizon glow
  */
-function FooterWaveGrid({ mouse }) {
+function FooterWaveGrid({ mouse, isMobile }) {
   const pointsRef = useRef();
   const groupRef = useRef();
   const meshLatticeRef = useRef();
 
-  // Grid dimensions
-  const rows = 40;
-  const cols = 80;
+  // Grid dimensions (scaled for mobile performance)
+  const rows = isMobile ? 28 : 40;
+  const cols = isMobile ? 50 : 80;
   const count = rows * cols;
 
   const { positions, basePositions, colors } = useMemo(() => {
@@ -34,8 +35,8 @@ function FooterWaveGrid({ mouse }) {
     let idx = 0;
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
-        const x = (j - cols / 2) * 0.44;
-        const z = (i - rows / 2) * 0.44;
+        const x = (j - cols / 2) * (isMobile ? 0.6 : 0.44);
+        const z = (i - rows / 2) * (isMobile ? 0.6 : 0.44);
         const y = 0;
 
         const i3 = idx * 3;
@@ -67,11 +68,11 @@ function FooterWaveGrid({ mouse }) {
       }
     }
     return { positions: pos, basePositions: basePos, colors: col };
-  }, [count, rows, cols]);
+  }, [count, rows, cols, isMobile]);
 
   // Floating Stardust Particles
   const stardust = useMemo(() => {
-    const dustCount = 280;
+    const dustCount = isMobile ? 140 : 280;
     const pos = new Float32Array(dustCount * 3);
     const col = new Float32Array(dustCount * 3);
 
@@ -90,7 +91,7 @@ function FooterWaveGrid({ mouse }) {
       col[i3 + 2] = c.b;
     }
     return { positions: pos, colors: col, count: dustCount };
-  }, []);
+  }, [isMobile]);
 
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
@@ -151,7 +152,7 @@ function FooterWaveGrid({ mouse }) {
           />
         </bufferGeometry>
         <pointsMaterial
-          size={0.08}
+          size={isMobile ? 0.09 : 0.08}
           vertexColors
           transparent
           opacity={0.7}
@@ -195,6 +196,8 @@ function FooterWaveGrid({ mouse }) {
  * Footer3DScene Canvas Wrapper
  */
 export function Footer3DScene({ mouse = { x: 0, y: 0 } }) {
+  const { isMobile, isSmallMobile } = useResponsive();
+
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-[#020610] via-[#040D1C] to-[#010307]">
       {/* Multi-Layer Volumetric Glows */}
@@ -212,20 +215,20 @@ export function Footer3DScene({ mouse = { x: 0, y: 0 } }) {
       />
 
       <Canvas
-        camera={{ position: [0, 2.2, 7.5], fov: 48 }}
+        camera={{ position: [0, 2.2, isSmallMobile ? 8.5 : isMobile ? 8.0 : 7.5], fov: isSmallMobile ? 54 : 48 }}
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: 'high-performance',
         }}
-        dpr={[1, 1.5]}
+        dpr={isMobile ? [1, 1.25] : [1, 1.5]}
       >
         <ambientLight intensity={0.6} color="#0B1C33" />
         <directionalLight position={[6, 8, 5]} intensity={1.8} color="#FFFFFF" />
         <directionalLight position={[-6, -4, 3]} intensity={1.2} color="#F59E0B" />
 
         <React.Suspense fallback={null}>
-          <FooterWaveGrid mouse={mouse} />
+          <FooterWaveGrid mouse={mouse} isMobile={isMobile} />
         </React.Suspense>
       </Canvas>
     </div>
