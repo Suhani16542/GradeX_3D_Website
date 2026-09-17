@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { MethodologyProcessBg } from '../three/MethodologyProcessBg';
+import { Methodology3DFullBg } from '../three/Methodology3DFullBg';
+import { Compliance3DShield } from '../three/Compliance3DShield';
 import { Button } from '../ui/Button';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -19,165 +20,219 @@ import {
   BadgeCheck,
   Lock,
   Activity,
-  ArrowDown
+  Shield,
+  FileBadge,
+  Check
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Section 5: Grade X 8-Step Kitchen Hygiene Methodology & Compliance WHS
- * Clean Unobstructed Process Layout:
- * Row 1: [01 CARD] ─── [02 CARD] ─── [03 CARD] ─── [04 CARD]
- *                                                       │
- *                                                       ▼
- * Row 2: [08 CARD] ◄── [07 CARD] ◄── [06 CARD] ◄── [05 CARD]
- * 
- * The gold process line exists ONLY in the empty gaps between cards.
- * ZERO line pixels pass behind or through any card!
+ * Design Features:
+ * - Full-bleed Edge-to-Edge Yellow Geometric Triangular Roof Canopy (Exact Image 2 Reference)
+ * - Decreases / retracts upwards smoothly as you scroll down ("scroll down par kam kam hota jaye")
+ * - Full-bleed Three.js 3D Conduit & Step Station Background across the 8-Step grid
+ * - Dedicated Interactive 3D Holographic Safety Shield & Matrix for COMPLIANCE & WHS
+ * - Premium Dark Navy, Emerald & Gold Glassmorphic Card Architecture
  */
 export function MethodologySection() {
   const sectionRef = useRef(null);
-  const activeTriangleRef = useRef(null);
-  const trailRef = useRef([]);
+  const bigYellowTriangleRef = useRef(null);
+  const apexGlowRef = useRef(null);
+  const cardsContainerRef = useRef(null);
+  const cardRefs = useRef([]);
+
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  // Compliance Section State
+  const [activeComplianceCard, setActiveComplianceCard] = useState(0);
+  const [hoveredComplianceCard, setHoveredComplianceCard] = useState(null);
 
   // EXACT 8 Methodology Steps from Client Brief
-  const row1Steps = [
+  const methodologySteps = [
     {
       num: "01",
       stepIdx: 0,
       title: "Site Inspection & Assessment",
+      subtitle: "Optical Riser & Hood Survey",
       desc: "Inspect the kitchen exhaust system, canopies, ducts, and fans to map out required cleaning areas.",
       icon: Search,
-      badge: "INITIAL AUDIT",
-      microType: "inspection",
+      badge: "PHASE 01",
+      accent: "text-amber-400",
+      tagClass: "bg-amber-400/15 text-amber-300 border-amber-400/30",
     },
     {
       num: "02",
       stepIdx: 1,
-      title: "Grease Thickness Measurement & Documentation",
+      title: "Grease Thickness Measurement",
+      subtitle: "Pre-Clean Ultrasonic Depth Gauge",
       desc: "Record baseline grease thickness before extraction to document pre-service conditions.",
       icon: Gauge,
-      badge: "PRE-CLEAN µm",
-      microType: "probe_pre",
+      badge: "PHASE 02",
+      accent: "text-sky-400",
+      tagClass: "bg-sky-400/15 text-sky-300 border-sky-400/30",
     },
     {
       num: "03",
       stepIdx: 2,
-      title: "Preparation & Protection of the Work Area",
-      desc: "Protect surrounding commercial kitchen equipment, cooking appliances, and surfaces.",
+      title: "Preparation & Protection",
+      subtitle: "Commercial Containment Shielding",
+      desc: "Protect surrounding commercial kitchen equipment, cooking appliances, and prep surfaces.",
       icon: ShieldCheck,
-      badge: "CONTAINMENT",
-      microType: "protection",
+      badge: "PHASE 03",
+      accent: "text-emerald-400",
+      tagClass: "bg-emerald-400/15 text-emerald-300 border-emerald-400/30",
     },
     {
       num: "04",
       stepIdx: 3,
-      title: "Interior Steam Washing & Deep Cleaning",
+      title: "Interior Steam Washing",
+      subtitle: "160°C Thermal Vapor Degreasing",
       desc: "Use high-temperature steam washing to emulsify and break down stubborn grease deposits.",
       icon: Waves,
-      badge: "STEAM WASH",
-      microType: "steam",
-    },
-  ];
-
-  const row2Steps = [
-    {
-      num: "08",
-      stepIdx: 7,
-      title: "Detailed Reporting & Client Documentation",
-      desc: "Comprehensive service reporting, verification documentation, and maintenance recommendations.",
-      icon: FileCheck2,
-      badge: "REPORT READY",
-      microType: "report",
+      badge: "PHASE 04",
+      accent: "text-indigo-400",
+      tagClass: "bg-indigo-400/15 text-indigo-300 border-indigo-400/30",
     },
     {
-      num: "07",
-      stepIdx: 6,
-      title: "Post-Cleaning Grease Measurement",
-      desc: "Measure grease levels again after cleaning to verify the standard of clean.",
-      icon: CheckCircle2,
-      badge: "POST-CLEAN µm",
-      microType: "probe_post",
+      num: "05",
+      stepIdx: 4,
+      title: "Canopy & Duct Component Cleaning",
+      subtitle: "2,400 RPM Rotary Scrubber",
+      desc: "Thorough cleaning of exhaust hood, interior ducting, filters, and accessible exhaust components.",
+      icon: Sparkles,
+      badge: "PHASE 05",
+      accent: "text-amber-400",
+      tagClass: "bg-amber-400/15 text-amber-300 border-amber-400/30",
     },
     {
       num: "06",
       stepIdx: 5,
       title: "Final Inspection & Quality Control",
+      subtitle: "360° Quality Verification",
       desc: "Rigorous post-clean visual inspection across all treated exhaust runs.",
       icon: ClipboardCheck,
-      badge: "QUALITY AUDIT",
-      microType: "inspection_final",
+      badge: "PHASE 06",
+      accent: "text-teal-400",
+      tagClass: "bg-teal-400/15 text-teal-300 border-teal-400/30",
     },
     {
-      num: "05",
-      stepIdx: 4,
-      title: "Canopy, Ductwork & Accessible Exhaust Component Cleaning",
-      desc: "Thorough cleaning of exhaust hood, interior ducting, filters, and accessible exhaust components.",
-      icon: Sparkles,
-      badge: "EXTRACTION",
-      microType: "scrub",
+      num: "07",
+      stepIdx: 6,
+      title: "Post-Cleaning Grease Measurement",
+      subtitle: "Sub-20 µm Micron Readout",
+      desc: "Measure grease levels again after cleaning to verify the standard of clean.",
+      icon: CheckCircle2,
+      badge: "PHASE 07",
+      accent: "text-emerald-400",
+      tagClass: "bg-emerald-400/15 text-emerald-300 border-emerald-400/30",
+    },
+    {
+      num: "08",
+      stepIdx: 7,
+      title: "Detailed Reporting & Documentation",
+      subtitle: "Official Shift PDF & Cert Package",
+      desc: "Comprehensive service reporting, verification documentation, and maintenance recommendations.",
+      icon: FileCheck2,
+      badge: "PHASE 08",
+      accent: "text-amber-300",
+      tagClass: "bg-amber-400/15 text-amber-300 border-amber-400/30",
     },
   ];
 
-  // All 8 steps sequentially for mobile vertical flow
-  const allStepsSequential = [
-    row1Steps[0], // 01
-    row1Steps[1], // 02
-    row1Steps[2], // 03
-    row1Steps[3], // 04
-    row2Steps[3], // 05
-    row2Steps[2], // 06
-    row2Steps[1], // 07
-    row2Steps[0], // 08
-  ];
-
-  // Compliance & WHS Modules
+  // 6 Compliance & WHS Modules from Brief
   const complianceModules = [
     {
+      id: 0,
       title: "WHS Procedures",
-      desc: "Standardized workplace health, safety, and operational safety protocols.",
+      subtitle: "Workplace Health & Safety",
+      desc: "Standardized workplace health, safety, and operational safety protocols executed on every shift.",
       icon: HardHat,
+      code: "WHS-ACT-2020",
+      status: "COMPLIANT",
+      tag: "SAFETY PROTOCOL",
+      accent: "amber",
     },
     {
+      id: 1,
       title: "SWMS Documentation",
-      desc: "Site-specific Safe Work Method Statements prepared and signed prior to work.",
+      subtitle: "Safe Work Method Statements",
+      desc: "Site-specific Safe Work Method Statements prepared, digitally signed, and validated prior to starting work.",
       icon: FileText,
+      code: "SWMS-REV-04",
+      status: "SIGNED & ACTIVE",
+      tag: "RISK CONTROL",
+      accent: "sky",
     },
     {
+      id: 2,
       title: "Risk Assessments",
-      desc: "Structured hazard identification, thermal safety controls, and containment checks.",
+      subtitle: "Pre-Work Hazard Matrix",
+      desc: "Structured hazard identification, thermal vapor safety controls, electrical isolations, and containment checks.",
       icon: ShieldCheck,
+      code: "HAZ-LVL-0",
+      status: "MITIGATED",
+      tag: "HAZARD MATRIX",
+      accent: "emerald",
     },
     {
+      id: 3,
       title: "Site-Specific Safety",
-      desc: "Tailored safety procedures accommodating specific kitchen workflows and facility access.",
+      subtitle: "Custom Workflow Alignment",
+      desc: "Tailored safety procedures accommodating specific commercial kitchen workflows, facility egress, and chef access.",
       icon: Activity,
+      code: "FACILITY-SPEC",
+      status: "VERIFIED",
+      tag: "SITE INTEGRATION",
+      accent: "amber",
     },
     {
+      id: 4,
       title: "Food-Safe Cleaning",
-      desc: "Food-grade, non-hazardous cleaning agents safe for commercial culinary prep environments.",
+      subtitle: "AS 4674 Food-Grade Standards",
+      desc: "Food-grade, non-hazardous cleaning agents and thermal steam rinse safe for commercial culinary prep environments.",
       icon: BadgeCheck,
+      code: "NON-TOXIC-R9",
+      status: "FOOD-SAFE CERT",
+      tag: "HYGIENE COMPLIANT",
+      accent: "emerald",
     },
     {
+      id: 5,
       title: "Compliance Documentation",
-      desc: "Service verification records, maintenance certificates, and insurer-ready documentation.",
+      subtitle: "Insurer-Ready AS 1851 Pack",
+      desc: "Service verification records, maintenance certificates, photographic archives, and insurer-ready audit documentation.",
       icon: Lock,
+      code: "AS-1851-2012",
+      status: "INSURER AUDITED",
+      tag: "CERTIFIED RECORD",
+      accent: "gold",
     },
   ];
+
+  const handleMouseMove = (e) => {
+    if (!sectionRef.current) return;
+    const rect = sectionRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+    setMouse({ x, y });
+  };
 
   // Master GSAP ScrollTrigger Sequence
   useEffect(() => {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
+      // Scroll-linked Sequence
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 75%",
-          end: "bottom 75%",
-          scrub: 1.6,
+          start: "top 90%",
+          end: "bottom 30%",
+          scrub: 1.2,
           onUpdate: (self) => {
             const p = self.progress;
             setScrollProgress(p);
@@ -187,364 +242,434 @@ export function MethodologySection() {
         },
       });
 
-      // Gold Triangle Indicator movement within the header indicator zone
-      if (activeTriangleRef.current) {
-        tl.to(
-          activeTriangleRef.current,
+      // Yellow Triangle Canopy (Exact Image 2 reference): Decreases / retracts smoothly on scroll down
+      if (bigYellowTriangleRef.current) {
+        tl.fromTo(
+          bigYellowTriangleRef.current,
           {
-            y: 35,
+            yPercent: 0,
+            scaleY: 1,
+            opacity: 0.95,
+            transformOrigin: "top center",
+          },
+          {
+            yPercent: -45,
+            scaleY: 0.15,
+            opacity: 0.05,
+            transformOrigin: "top center",
             ease: "none",
           },
           0
         );
       }
 
-      // Fading Trail Triangles
-      trailRef.current.forEach((trailEl, idx) => {
-        if (trailEl) {
-          tl.to(
-            trailEl,
-            {
-              y: 35 - (idx + 1) * 8,
-              opacity: 0.6 - idx * 0.18,
-              ease: "none",
-            },
-            (idx + 1) * 0.04
-          );
-        }
-      });
+      if (apexGlowRef.current) {
+        tl.fromTo(
+          apexGlowRef.current,
+          {
+            scale: 1.2,
+            opacity: 1,
+          },
+          {
+            scale: 0.3,
+            opacity: 0.1,
+            ease: "none",
+          },
+          0
+        );
+      }
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  // Step-Specific Micro Visual Render Helper
-  const renderStepMicroVisual = (microType, isActive) => {
-    switch (microType) {
-      case 'probe_pre':
-        return (
-          <div className="mt-2.5 py-1.5 px-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[10px] font-mono flex items-center justify-between">
-            <span className="text-slate-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
-              Pre-Clean Probe
-            </span>
-            <span className="text-rose-300 font-bold">Baseline Set</span>
-          </div>
-        );
-      case 'steam':
-        return (
-          <div className="mt-2.5 py-1.5 px-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[10px] font-mono flex items-center justify-between">
-            <span className="text-slate-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping" />
-              Thermal Vapor
-            </span>
-            <span className="text-sky-300 font-bold">Steam Active</span>
-          </div>
-        );
-      case 'probe_post':
-        return (
-          <div className="mt-2.5 py-1.5 px-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[10px] font-mono flex items-center justify-between">
-            <span className="text-slate-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              Post-Clean Probe
-            </span>
-            <span className="text-emerald-400 font-bold">Verified Pass</span>
-          </div>
-        );
-      case 'report':
-        return (
-          <div className="mt-2.5 py-1.5 px-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[10px] font-mono flex items-center justify-between">
-            <span className="text-slate-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-              Digital PDF Log
-            </span>
-            <span className="text-amber-300 font-bold">Report Ready</span>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  // Render Card Component
-  const renderCard = (step) => {
-    const Icon = step.icon;
-    const isActive = activeStepIndex === step.stepIdx;
-    const isPast = activeStepIndex > step.stepIdx;
-
-    return (
-      <div
-        key={step.num}
-        onClick={() => setActiveStepIndex(step.stepIdx)}
-        className={`relative p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between select-none backdrop-blur-md min-h-[225px] w-full ${
-          isActive
-            ? 'bg-gradient-to-b from-[#142338]/95 via-[#0D1929]/95 to-[#060E1A]/95 border-amber-400 shadow-xl shadow-amber-500/20 -translate-y-1 ring-1 ring-amber-400/50'
-            : isPast
-            ? 'bg-[#081324]/90 border-slate-700/80 hover:border-amber-400/40'
-            : 'bg-[#050C17]/85 border-slate-800/80 hover:border-slate-700'
-        }`}
-      >
-        {/* Subtle Glow on Active */}
-        {isActive && (
-          <div className="absolute -inset-1 rounded-2xl blur-lg bg-amber-500/15 pointer-events-none" />
-        )}
-
-        <div className="relative z-10 space-y-2">
-          {/* Top Row: Number & Icon */}
-          <div className="flex items-center justify-between">
-            <span
-              className={`text-lg font-black font-mono tracking-tight transition-colors ${
-                isActive ? 'text-amber-300' : isPast ? 'text-slate-300' : 'text-slate-500'
-              }`}
-            >
-              {step.num}
-            </span>
-            <div
-              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-                isActive
-                  ? 'bg-amber-400 text-slate-950 font-bold shadow-md shadow-amber-500/30 scale-105'
-                  : isPast
-                  ? 'bg-slate-800 text-amber-300 border border-amber-400/30'
-                  : 'bg-slate-900 text-slate-400 border border-slate-800'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-            </div>
-          </div>
-
-          {/* Title */}
-          <h3
-            className={`text-xs sm:text-sm font-black tracking-tight uppercase leading-snug transition-colors ${
-              isActive ? 'text-white' : 'text-slate-200'
-            }`}
-          >
-            {step.title}
-          </h3>
-
-          {/* Description */}
-          <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed font-normal">
-            {step.desc}
-          </p>
-
-          {/* Step-specific Micro Visual */}
-          {renderStepMicroVisual(step.microType, isActive)}
-        </div>
-
-        {/* Bottom Status */}
-        <div className="relative z-10 pt-2.5 mt-2 border-t border-slate-800/80 flex items-center justify-between text-[9px] font-mono">
-          <span className="text-slate-400 font-bold">
-            {step.badge}
-          </span>
-          <span
-            className={`font-semibold flex items-center gap-1 ${
-              isActive
-                ? 'text-amber-400 font-bold'
-                : isPast
-                ? 'text-emerald-400'
-                : 'text-slate-600'
-            }`}
-          >
-            {isActive ? '● IN PROGRESS' : isPast ? '✓ COMPLETE' : '○ PENDING'}
-          </span>
-        </div>
-      </div>
-    );
-  };
-
-  // Inter-card Process Connector in Empty Gap
-  const renderHorizontalConnector = (fromIdx, toIdx, direction = 'right') => {
-    const isLit = activeStepIndex >= toIdx;
-    return (
-      <div className="hidden lg:flex items-center justify-center w-8 shrink-0 relative px-1">
-        {/* Connector Line */}
-        <div className="w-full h-0.5 relative bg-slate-800">
-          <div
-            className={`absolute inset-0 transition-all duration-500 bg-gradient-to-r from-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)] ${
-              isLit ? 'opacity-100' : 'opacity-20'
-            }`}
-          />
-        </div>
-        {/* Small Arrow indicator */}
-        <div
-          className={`absolute text-[10px] font-mono leading-none transition-colors ${
-            isLit ? 'text-amber-400 font-bold drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]' : 'text-slate-600'
-          }`}
-        >
-          {direction === 'right' ? '▶' : '◀'}
-        </div>
-      </div>
-    );
-  };
+  const selectedCompliance = complianceModules[hoveredComplianceCard !== null ? hoveredComplianceCard : activeComplianceCard];
 
   return (
     <section
       ref={sectionRef}
       id="methodology"
-      className="relative z-20 w-full py-20 lg:py-28 bg-[#030812] overflow-hidden border-b border-slate-800/80 flex flex-col justify-center"
+      onMouseMove={handleMouseMove}
+      className="relative z-20 w-full py-24 lg:py-36 bg-[#020610] overflow-hidden border-b border-slate-800/80 flex flex-col justify-center"
     >
-      {/* 3D Ambient Particle Background (Pure ambient only, NO lines behind cards!) */}
-      <MethodologyProcessBg />
+      {/* ================= FULL-BLEED 3D CONDUIT & STEP STATION BACKGROUND ================= */}
+      <Methodology3DFullBg
+        scrollProgress={scrollProgress}
+        mouse={mouse}
+        activeStep={activeStepIndex}
+      />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 flex flex-col space-y-16">
+      {/* ================= FULL-WIDTH EDGE-TO-EDGE YELLOW TRIANGULAR CANOPY (EXACT IMAGE 2 STYLE) ================= */}
+      <div className="absolute inset-x-0 top-0 w-full h-[520px] sm:h-[650px] lg:h-[800px] pointer-events-none z-0 overflow-hidden">
+        <div
+          ref={bigYellowTriangleRef}
+          className="w-full h-full relative"
+        >
+          {/* Full-width SVG with crisp angled roof/chevron cutout */}
+          <svg
+            className="w-full h-full"
+            viewBox="0 0 1440 600"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <linearGradient id="yellowCanopyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.9" />
+                <stop offset="60%" stopColor="#EAB308" stopOpacity="0.75" />
+                <stop offset="100%" stopColor="#CA8A04" stopOpacity="0.1" />
+              </linearGradient>
+            </defs>
+
+            {/* Solid Yellow Canopy Shape with Inverted Peak Notch */}
+            <path
+              d="M 0 0 L 1440 0 L 1440 540 L 720 180 L 0 540 Z"
+              fill="url(#yellowCanopyGrad)"
+            />
+
+            {/* Glowing Golden Vector Outline */}
+            <polyline
+              points="0,540 720,180 1440,540"
+              fill="none"
+              stroke="#FDE047"
+              strokeWidth="4"
+              strokeOpacity="0.95"
+            />
+
+            {/* Secondary Technical Dashline */}
+            <polyline
+              points="0,520 720,165 1440,520"
+              fill="none"
+              stroke="#F59E0B"
+              strokeWidth="1.5"
+              strokeDasharray="12 8"
+              strokeOpacity="0.5"
+            />
+          </svg>
+
+          {/* Glowing Apex Beacon at the Center Peak Vertex */}
+          <div
+            ref={apexGlowRef}
+            className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none"
+          >
+            <div className="w-10 h-10 rounded-full bg-amber-300 blur-lg animate-ping" />
+            <div className="w-5 h-5 rounded-full bg-white shadow-[0_0_25px_#FDE047] -mt-7.5" />
+          </div>
+        </div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 flex flex-col space-y-20 lg:space-y-32">
         
-        {/* ================= 1. HEADING & GOLD TRIANGLE SCROLL INDICATOR ================= */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 relative">
+        {/* ================= 1. HEADING ================= */}
+        <div className="text-center max-w-3xl mx-auto space-y-4 relative">
           
-          {/* Signature Gold/Yellow Triangle & Multi-Tier Fading Trail in Header Zone */}
-          <div className="flex justify-center items-center relative h-10 mb-2 pointer-events-none">
-            {/* Leading Active Triangle */}
-            <div
-              ref={activeTriangleRef}
-              className="absolute z-20 flex flex-col items-center drop-shadow-[0_0_10px_rgba(245,158,11,0.9)]"
-            >
-              <span className="text-amber-400 text-lg leading-none select-none font-bold">
-                ▲
-              </span>
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 backdrop-blur-md border border-amber-400/30 text-[11px] font-semibold text-amber-300 shadow-lg">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span className="tracking-wide uppercase">METHODOLOGY & QUALITY ASSURANCE</span>
             </div>
 
-            {/* Fading Trail Triangles (3 subtle positions) */}
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                ref={(el) => (trailRef.current[i] = el)}
-                style={{ opacity: 0.5 - i * 0.15 }}
-                className="absolute z-10 flex flex-col items-center"
-              >
-                <span className="text-amber-300 text-sm leading-none select-none">
-                  ▲
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-2">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.08] font-sans">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.05] font-sans">
               OUR <span className="gold-gradient-text">8-STEP METHODOLOGY</span>
             </h2>
-            <p className="text-xs sm:text-sm lg:text-base text-slate-300 leading-relaxed font-normal max-w-2xl mx-auto">
+            
+            <p className="text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl mx-auto pt-1">
               A structured process built around inspection, measurement, professional cleaning, final verification and digital reporting.
             </p>
           </div>
         </div>
 
-        {/* ================= 2. DESKTOP U-SHAPED METHODOLOGY FLOW (CLEAN EMPTY-GAP CONNECTORS) ================= */}
-        <div className="hidden lg:flex flex-col space-y-6">
-          
-          {/* ROW 1: Steps 01 -> 02 -> 03 -> 04 */}
-          <div className="flex items-center justify-between w-full">
-            <div className="flex-1">{renderCard(row1Steps[0])}</div>
-            {renderHorizontalConnector(0, 1, 'right')}
-            <div className="flex-1">{renderCard(row1Steps[1])}</div>
-            {renderHorizontalConnector(1, 2, 'right')}
-            <div className="flex-1">{renderCard(row1Steps[2])}</div>
-            {renderHorizontalConnector(2, 3, 'right')}
-            <div className="flex-1">{renderCard(row1Steps[3])}</div>
-          </div>
+        {/* ================= 2. 8-STEP METHODOLOGY GLASSMORPHIC CARDS ================= */}
+        <div ref={cardsContainerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
+          {methodologySteps.map((step, idx) => {
+            const Icon = step.icon;
+            const isActive = activeStepIndex === idx;
+            const isPast = activeStepIndex > idx;
 
-          {/* VERTICAL RIGHT-MARGIN CONNECTOR (Between 04 and 05 in the empty gap) */}
-          <div className="flex justify-end pr-14 py-1">
-            <div className="flex flex-col items-center justify-center h-10 relative">
-              <div className="w-0.5 h-full bg-slate-800 relative">
-                <div
-                  className={`absolute inset-0 transition-all duration-500 bg-gradient-to-b from-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)] ${
-                    activeStepIndex >= 4 ? 'opacity-100' : 'opacity-20'
-                  }`}
-                />
-              </div>
+            return (
               <div
-                className={`absolute top-1/2 -translate-y-1/2 text-[10px] font-mono transition-colors ${
-                  activeStepIndex >= 4 ? 'text-amber-400 font-bold drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]' : 'text-slate-600'
+                key={step.num}
+                ref={(el) => (cardRefs.current[idx] = el)}
+                onClick={() => setActiveStepIndex(idx)}
+                className={`group relative p-6 rounded-3xl border transition-all duration-400 cursor-pointer flex flex-col justify-between select-none backdrop-blur-xl min-h-[240px] ${
+                  isActive
+                    ? 'bg-gradient-to-b from-[#142642]/95 via-[#0D1C33]/95 to-[#06101E]/95 border-amber-400 shadow-2xl shadow-amber-500/25 -translate-y-2 ring-2 ring-amber-400/50'
+                    : isPast
+                    ? 'bg-[#081528]/85 border-slate-700/70 hover:border-amber-400/40 hover:-translate-y-1 shadow-lg'
+                    : 'bg-[#050E1C]/80 border-slate-800/80 hover:border-slate-700 hover:-translate-y-1 shadow-md'
                 }`}
               >
-                ▼
-              </div>
-            </div>
-          </div>
+                {/* Active Gold Glow Background Aura */}
+                {isActive && (
+                  <div className="absolute -inset-1 rounded-3xl blur-xl bg-amber-500/20 pointer-events-none" />
+                )}
 
-          {/* ROW 2: Steps 08 <- 07 <- 06 <- 05 (Rendered on screen from left to right: 08, 07, 06, 05) */}
-          <div className="flex items-center justify-between w-full">
-            <div className="flex-1">{renderCard(row2Steps[0])}</div>
-            {renderHorizontalConnector(7, 6, 'left')}
-            <div className="flex-1">{renderCard(row2Steps[1])}</div>
-            {renderHorizontalConnector(6, 5, 'left')}
-            <div className="flex-1">{renderCard(row2Steps[2])}</div>
-            {renderHorizontalConnector(5, 4, 'left')}
-            <div className="flex-1">{renderCard(row2Steps[3])}</div>
-          </div>
-
-        </div>
-
-        {/* ================= MOBILE / TABLET VERTICAL TIMELINE FLOW ================= */}
-        <div className="flex lg:hidden flex-col space-y-4">
-          {allStepsSequential.map((step, idx) => (
-            <React.Fragment key={step.num}>
-              {renderCard(step)}
-              {idx < 7 && (
-                <div className="flex justify-center py-1">
-                  <div className="flex flex-col items-center justify-center h-6 relative">
-                    <div className="w-0.5 h-full bg-slate-800 relative">
-                      <div
-                        className={`absolute inset-0 transition-all duration-500 bg-amber-400 ${
-                          activeStepIndex > idx ? 'opacity-100' : 'opacity-20'
-                        }`}
-                      />
-                    </div>
-                    <div
-                      className={`text-[8px] font-mono ${
-                        activeStepIndex > idx ? 'text-amber-400 font-bold' : 'text-slate-600'
+                <div className="relative z-10 space-y-3">
+                  {/* Top Row: Phase Badge & Step Icon */}
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`text-xl font-mono font-black tracking-tight ${
+                        isActive ? 'text-amber-300' : isPast ? 'text-slate-300' : 'text-slate-500'
                       }`}
                     >
-                      ▼
+                      {step.num}
+                    </span>
+                    <div
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                        isActive
+                          ? 'bg-amber-400 text-slate-950 font-bold shadow-lg shadow-amber-500/30 scale-110'
+                          : isPast
+                          ? 'bg-slate-800/90 text-amber-300 border border-amber-400/30'
+                          : 'bg-slate-900/90 text-slate-400 border border-slate-800'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
                     </div>
                   </div>
+
+                  {/* Title & Subtitle */}
+                  <div className="space-y-0.5">
+                    <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${step.accent}`}>
+                      {step.subtitle}
+                    </span>
+                    <h3 className="text-base font-black text-white tracking-tight uppercase leading-snug group-hover:text-amber-300 transition-colors">
+                      {step.title}
+                    </h3>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                    {step.desc}
+                  </p>
                 </div>
-              )}
-            </React.Fragment>
-          ))}
+
+                {/* Bottom Step Status Tag */}
+                <div className="relative z-10 pt-3 mt-3 border-t border-slate-800/80 flex items-center justify-between text-[10px] font-mono">
+                  <span className={`px-2 py-0.5 rounded-full border ${step.tagClass} font-bold uppercase tracking-wider`}>
+                    {step.badge}
+                  </span>
+                  <span
+                    className={`font-semibold flex items-center gap-1 ${
+                      isActive
+                        ? 'text-amber-400 font-bold'
+                        : isPast
+                        ? 'text-emerald-400'
+                        : 'text-slate-500'
+                    }`}
+                  >
+                    {isActive ? '● ACTIVE PHASE' : isPast ? '✓ COMPLETE' : '○ PENDING'}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* ================= 3. COMPLIANCE & WHS AREA ================= */}
-        <div className="pt-8 border-t border-slate-800/80 space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase font-sans">
-              COMPLIANCE & <span className="gold-gradient-text">WHS</span>
+        {/* ================= 3. DEDICATED 3D COMPLIANCE & WHS EXPERIENCE ================= */}
+        <div className="pt-16 border-t border-slate-800/80 space-y-12 relative">
+          
+          {/* Section Heading & Subtitle */}
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 backdrop-blur-md border border-emerald-500/30 text-[11px] font-semibold text-emerald-300 shadow-lg">
+              <Shield className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="tracking-wide uppercase">SAFETY STANDARDS & COMPLIANCE ASSURANCE</span>
+            </div>
+
+            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase font-sans">
+              COMPLIANCE & <span className="gold-gradient-text">WHS PROTOCOLS</span>
             </h3>
-            <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed">
-              Standardized safety management, structured hazard controls, and complete operational documentation.
+            <p className="text-sm sm:text-base text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto">
+              Standardized safety management, structured hazard controls, food-safe operational practices, and complete insurer-ready audit documentation.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {complianceModules.map((item, idx) => {
-              const ItemIcon = item.icon;
+          {/* Interactive 3D Holographic Safety Shield + Dual 3-Card Grid Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            {/* Left Column: 3 Compliance Cards (01, 02, 03) */}
+            <div className="lg:col-span-4 space-y-4">
+              {complianceModules.slice(0, 3).map((item) => {
+                const ItemIcon = item.icon;
+                const isSelected = (hoveredComplianceCard !== null ? hoveredComplianceCard : activeComplianceCard) === item.id;
+                return (
+                  <div
+                    key={item.id}
+                    onMouseEnter={() => setHoveredComplianceCard(item.id)}
+                    onMouseLeave={() => setHoveredComplianceCard(null)}
+                    onClick={() => setActiveComplianceCard(item.id)}
+                    className={`group relative p-5 rounded-3xl border transition-all duration-300 cursor-pointer flex flex-col justify-between backdrop-blur-xl ${
+                      isSelected
+                        ? 'bg-gradient-to-r from-[#10243E] to-[#0A1728] border-amber-400 shadow-xl shadow-amber-500/15 translate-x-1 ring-1 ring-amber-400/40'
+                        : 'bg-[#060F1D]/85 border-slate-800/90 hover:border-slate-700 hover:bg-[#081528]/90'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3.5">
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-all ${
+                        isSelected
+                          ? 'bg-amber-400 text-slate-950 font-bold shadow-lg shadow-amber-500/30 scale-105'
+                          : 'bg-slate-900/90 text-amber-400 border border-slate-800 group-hover:border-amber-400/40'
+                      }`}>
+                        <ItemIcon className="w-5 h-5" />
+                      </div>
+                      <div className="space-y-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <h4 className="text-sm font-bold text-white uppercase tracking-tight group-hover:text-amber-300 transition-colors truncate">
+                            {item.title}
+                          </h4>
+                          <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-900/90 border border-slate-700/60 text-slate-300 font-bold tracking-wider">
+                            {item.code}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[10px] font-mono">
+                      <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                        <Check className="w-3 h-3" /> {item.status}
+                      </span>
+                      <span className="text-slate-400 group-hover:text-amber-400 transition-colors">
+                        {isSelected ? '● 3D SCANNING' : 'CLICK TO INSPECT →'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Middle Column: Central 3D Interactive WebGL Safety Hologram */}
+            <div className="lg:col-span-4 flex flex-col items-center justify-center relative">
+              {/* 3D Canvas Box */}
+              <div className="w-full relative rounded-3xl bg-gradient-to-b from-[#081526]/60 via-[#040B14]/80 to-[#02060C]/90 border border-slate-800/80 p-2 overflow-hidden shadow-2xl backdrop-blur-2xl">
+                
+                {/* Top Telemetry Header */}
+                <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-md">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="text-[10px] font-mono font-bold text-emerald-300 uppercase tracking-wider">
+                      SAFETY MATRIX ACTIVE
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold text-amber-400">
+                    {selectedCompliance.code}
+                  </span>
+                </div>
+
+                {/* 3D Three.js Hologram */}
+                <Compliance3DShield
+                  activeCard={activeComplianceCard}
+                  hoveredCard={hoveredComplianceCard}
+                  mouse={mouse}
+                />
+
+                {/* Bottom Active Module Details Readout */}
+                <div className="absolute bottom-4 left-4 right-4 z-20 p-3 rounded-2xl bg-[#071324]/90 border border-amber-400/40 backdrop-blur-md text-center space-y-1 shadow-lg">
+                  <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center justify-center gap-1.5">
+                    <Sparkles className="w-3 h-3" /> {selectedCompliance.tag}
+                  </div>
+                  <div className="text-xs font-bold text-white uppercase tracking-tight">
+                    {selectedCompliance.subtitle}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: 3 Compliance Cards (04, 05, 06) */}
+            <div className="lg:col-span-4 space-y-4">
+              {complianceModules.slice(3, 6).map((item) => {
+                const ItemIcon = item.icon;
+                const isSelected = (hoveredComplianceCard !== null ? hoveredComplianceCard : activeComplianceCard) === item.id;
+                return (
+                  <div
+                    key={item.id}
+                    onMouseEnter={() => setHoveredComplianceCard(item.id)}
+                    onMouseLeave={() => setHoveredComplianceCard(null)}
+                    onClick={() => setActiveComplianceCard(item.id)}
+                    className={`group relative p-5 rounded-3xl border transition-all duration-300 cursor-pointer flex flex-col justify-between backdrop-blur-xl ${
+                      isSelected
+                        ? 'bg-gradient-to-r from-[#10243E] to-[#0A1728] border-amber-400 shadow-xl shadow-amber-500/15 -translate-x-1 ring-1 ring-amber-400/40'
+                        : 'bg-[#060F1D]/85 border-slate-800/90 hover:border-slate-700 hover:bg-[#081528]/90'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3.5">
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-all ${
+                        isSelected
+                          ? 'bg-amber-400 text-slate-950 font-bold shadow-lg shadow-amber-500/30 scale-105'
+                          : 'bg-slate-900/90 text-amber-400 border border-slate-800 group-hover:border-amber-400/40'
+                      }`}>
+                        <ItemIcon className="w-5 h-5" />
+                      </div>
+                      <div className="space-y-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <h4 className="text-sm font-bold text-white uppercase tracking-tight group-hover:text-amber-300 transition-colors truncate">
+                            {item.title}
+                          </h4>
+                          <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-900/90 border border-slate-700/60 text-slate-300 font-bold tracking-wider">
+                            {item.code}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[10px] font-mono">
+                      <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                        <Check className="w-3 h-3" /> {item.status}
+                      </span>
+                      <span className="text-slate-400 group-hover:text-amber-400 transition-colors">
+                        {isSelected ? '● 3D SCANNING' : 'CLICK TO INSPECT →'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+          </div>
+
+          {/* Bottom Live Safety Assurance Metrics Strip */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+            {[
+              { label: "INSURER AUDITED", val: "100% ACCEPTED", desc: "Meets all major underwriter criteria", icon: FileBadge },
+              { label: "AUSTRALIAN STANDARD", val: "AS 1851-2012", desc: "Routine maintenance verified", icon: ShieldCheck },
+              { label: "CHEMICAL HAZARD", val: "ZERO RESIDUE", desc: "Food-grade non-toxic agents", icon: BadgeCheck },
+              { label: "SAFETY COVERAGE", val: "SIGNED SWMS", desc: "Executed on every active shift", icon: HardHat },
+            ].map((metric, idx) => {
+              const MetricIcon = metric.icon;
               return (
                 <div
                   key={idx}
-                  className="p-5 rounded-2xl bg-gradient-to-b from-[#091526]/80 to-[#050C17]/80 border border-slate-800 hover:border-amber-400/40 transition-all duration-300 flex items-start gap-4 backdrop-blur-sm group hover:-translate-y-1"
+                  className="p-4 rounded-2xl bg-gradient-to-b from-[#081424]/80 to-[#040A12]/80 border border-slate-800/80 hover:border-amber-400/30 transition-all flex flex-col justify-between space-y-2 backdrop-blur-md"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 group-hover:bg-amber-400 group-hover:text-slate-950 transition-all">
-                    <ItemIcon className="w-5 h-5" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                      {metric.label}
+                    </span>
+                    <MetricIcon className="w-4 h-4 text-amber-400" />
                   </div>
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-bold text-white uppercase tracking-tight group-hover:text-amber-300 transition-colors">
-                      {item.title}
-                    </h4>
-                    <p className="text-xs text-slate-400 leading-relaxed font-normal">
-                      {item.desc}
-                    </p>
+                  <div>
+                    <div className="text-base sm:text-lg font-black text-white font-mono tracking-tight text-amber-300">
+                      {metric.val}
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-normal">
+                      {metric.desc}
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
+
         </div>
 
         {/* ================= 4. ACTION CTA ================= */}
         <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-          <Button to="/contact" variant="gold" size="md" icon={ArrowRight} className="shadow-lg shadow-amber-500/20 text-xs py-2.5 px-6 font-bold">
+          <Button to="/contact" variant="gold" size="md" icon={ArrowRight} className="shadow-lg shadow-amber-500/20 text-xs py-3 px-7 font-bold">
             SCHEDULE A STEP 1 ASSESSMENT
           </Button>
-          <Button to="/services" variant="navy" size="md" icon={ChevronRight} className="text-xs py-2.5 px-6 font-semibold">
+          <Button to="/services" variant="navy" size="md" icon={ChevronRight} className="text-xs py-3 px-7 font-semibold">
             EXPLORE SERVICE PACKAGES
           </Button>
         </div>
