@@ -21,12 +21,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Section 4: Digital Evidence & Proven Results
- * Layering Architecture:
- * - z-0: Three.js Dynamic WebGL Particle Background (inspired by webgl_points_dynamic)
- * - z-2: Section 4 3D Assembling Heading
- * - z-3: Before/After WebGL Shader Transition
- * - z-4: Digital Grease Measurement Telemetry HUD
- * - z-5: 4 Evidence Cards
+ * Integrated 3D Duct Zoom Before/After Transition + Measurement Telemetry HUD + 4 Evidence Cards
  */
 export function DigitalEvidenceSection() {
   const sectionRef = useRef(null);
@@ -36,7 +31,7 @@ export function DigitalEvidenceSection() {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   
   // Interactive transition slider (0 = Before, 1 = After)
-  const [sliderProgress, setSliderProgress] = useState(0.5);
+  const [sliderProgress, setSliderProgress] = useState(0.45);
   const [isDragging, setIsDragging] = useState(false);
 
   // Normalized mouse coordinates for subtle WebGL particle parallax
@@ -120,7 +115,7 @@ export function DigitalEvidenceSection() {
     },
   ];
 
-  // GSAP 3D Heading & Sequence Timeline
+  // GSAP 3D Heading & Scroll Scrub Timeline
   useEffect(() => {
     if (!sectionRef.current) return;
 
@@ -170,6 +165,19 @@ export function DigitalEvidenceSection() {
             },
           }
         );
+
+        // Scroll scrub advances Before/After transition and 3D zoom through duct
+        ScrollTrigger.create({
+          trigger: visualContainerRef.current,
+          start: "top 65%",
+          end: "bottom 35%",
+          scrub: 1.5,
+          onUpdate: (self) => {
+            if (!isDragging) {
+              setSliderProgress(0.1 + self.progress * 0.85);
+            }
+          },
+        });
       }
 
       // 3. Evidence Cards Sequential Entrance
@@ -196,7 +204,7 @@ export function DigitalEvidenceSection() {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isDragging]);
 
   const handleSliderChange = (e) => {
     setSliderProgress(parseFloat(e.target.value));
@@ -221,7 +229,7 @@ export function DigitalEvidenceSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 backdrop-blur-md border border-amber-400/30 text-[11px] font-semibold text-amber-300 shadow-lg">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span className="tracking-wide uppercase">MEASURABLE COMPLIANCE</span>
+            <span className="tracking-wide uppercase">MEASURABLE COMPLIANCE & EVIDENCE</span>
           </div>
 
           {/* 3D Assembling Headline */}
@@ -253,7 +261,7 @@ export function DigitalEvidenceSection() {
           </p>
         </div>
 
-        {/* ================= LAYER 3 & 4: MAIN BEFORE/AFTER 3D TRANSITION & MEASUREMENT HUD ================= */}
+        {/* ================= LAYER 3 & 4: MAIN 3D DUCT ZOOM BEFORE/AFTER & MEASUREMENT HUD ================= */}
         <div
           ref={visualContainerRef}
           className="relative max-w-5xl mx-auto w-full rounded-3xl overflow-hidden border border-amber-400/35 shadow-2xl bg-gradient-to-b from-[#0A1628]/95 via-[#06101E]/95 to-[#030812]/95 p-4 sm:p-6 space-y-4"
@@ -289,8 +297,8 @@ export function DigitalEvidenceSection() {
             </div>
           </div>
 
-          {/* WebGL 3D Shader Transition Viewport (Layer 3) */}
-          <div className="relative w-full h-[280px] sm:h-[380px] lg:h-[440px] rounded-2xl overflow-hidden border border-slate-700/60 bg-black group select-none shadow-inner">
+          {/* WebGL 3D Shader Transition Viewport with 3D Duct Tunnel & Camera Zoom */}
+          <div className="relative w-full h-[320px] sm:h-[420px] lg:h-[480px] rounded-2xl overflow-hidden border border-slate-700/60 bg-black group select-none shadow-inner">
             <DuctTransitionScene3D progress={sliderProgress} />
 
             {/* Left Image Badge (Before) */}
@@ -342,16 +350,16 @@ export function DigitalEvidenceSection() {
               onMouseDown={() => setIsDragging(true)}
               onMouseUp={() => setIsDragging(false)}
               className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30"
-              aria-label="Drag Before/After transition slider"
+              aria-label="Drag or scroll Before/After transition slider"
             />
           </div>
 
           {/* Bottom Telemetry HUD Slider Bar (Layer 4) */}
           <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono bg-slate-950/80 p-3 sm:p-4 rounded-2xl border border-slate-800">
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 text-[11px]">DRAG SLIDER:</span>
+              <span className="text-slate-400 text-[11px]">SCROLL OR DRAG SLIDER:</span>
               <span className="text-amber-400 font-bold text-[11px]">
-                {sliderProgress < 0.3 ? 'BEFORE: 1,850 µm' : sliderProgress > 0.7 ? 'AFTER: < 18 µm' : 'TRANSITIONING...'}
+                {sliderProgress < 0.3 ? 'BEFORE: 1,850 µm (Heavy Buildup)' : sliderProgress > 0.7 ? 'AFTER: < 18 µm (Restored)' : 'TRANSFORMATION IN PROGRESS...'}
               </span>
             </div>
 

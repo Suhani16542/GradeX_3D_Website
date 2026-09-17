@@ -5,17 +5,16 @@ import { RoboticTechnologySection } from '../components/home/RoboticTechnologySe
 import { CoreServicesSection } from '../components/home/CoreServicesSection';
 import { DigitalEvidenceSection } from '../components/home/DigitalEvidenceSection';
 import { MethodologySection } from '../components/home/MethodologySection';
-import { CaseStudiesSection } from '../components/home/CaseStudiesSection';
 import { FinalCtaSection } from '../components/home/FinalCtaSection';
 
 /**
- * Grade X Commercial Solutions Pty Ltd - Complete Animated 6-Section Homepage
+ * Grade X Commercial Solutions Pty Ltd - Complete Animated Homepage Experience
  * 1. SECTION 1 — Full-Screen Immersive 3D Commercial Exhaust Duct Cleaning Hero
  * 2. SECTION 2 — Technology / Robotic Cleaning (3D Interactive Model + 3 Feature Cards)
- * 3. SECTION 3 — Services (6 Animated Service Cards with 3D Tilt & Micro-Interactions)
- * 4. SECTION 4 — Digital Evidence & Compliance (Interactive Before/After Wipe & 4 Evidence Cards)
- * 5. SECTION 5 — Methodology / How We Work (8-Step Sequential Process Timeline)
- * 6. SECTION 6 — Case Studies & Final Action CTA (Demonstrated Results + High-Impact Quote CTA)
+ * 3. SECTION 3 — Services (Three.js Interactive Particle Field + 6 Service Cards)
+ * 4. SECTION 4 — Digital Evidence & Proven Results (3D Duct Zoom Before/After Transition + 4 Evidence Cards)
+ * 5. SECTION 5 — Our 8-Step Methodology & Compliance WHS (3D Process Path + Gold Triangle Scroll Indicator)
+ * 6. SECTION 6 — Service Area & Final CTA (3D Western Australia / Perth Operations Map + Direct Contact)
  */
 export function HomePage() {
   return (
@@ -31,17 +30,16 @@ export function HomePage() {
       {/* SECTION 2 — Technology / Robotic Cleaning */}
       <RoboticTechnologySection />
 
-      {/* SECTION 3 — Services (6 Specialized Cards) */}
+      {/* SECTION 3 — Services (6 Specialized Cards with Particle Field) */}
       <CoreServicesSection />
 
-      {/* SECTION 4 — Digital Evidence & Compliance */}
+      {/* SECTION 4 — Digital Evidence & Proven Results (3D Duct Zoom Transition) */}
       <DigitalEvidenceSection />
 
-      {/* SECTION 5 — Methodology / How We Work (8-Step Timeline) */}
+      {/* SECTION 5 — Our 8-Step Methodology & Compliance WHS */}
       <MethodologySection />
 
-      {/* SECTION 6 — Case Studies & Final CTA */}
-      <CaseStudiesSection />
+      {/* SECTION 6 — Service Area WA Map & Final Action CTA */}
       <FinalCtaSection />
     </>
   );
