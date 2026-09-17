@@ -47,7 +47,7 @@ export function Hero3D() {
       ScrollTrigger.create({
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=2000', // Pinned scroll track distance for 5-stage story scrubbing
+        end: '+=1500', // Exact pinned distance for 5-stage story scrubbing
         pin: true,
         pinSpacing: true,
         scrub: 0.8,

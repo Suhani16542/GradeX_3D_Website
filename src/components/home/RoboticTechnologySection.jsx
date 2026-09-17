@@ -126,8 +126,12 @@ export function RoboticTechnologySection() {
   return (
     <section
       ref={sectionRef}
-      className="relative z-20 w-full py-16 lg:py-24 bg-[#050D1A] overflow-hidden border-b border-slate-800/80"
+      id="technology"
+      className="relative z-20 w-full py-16 lg:py-24 bg-[#050D1A] overflow-hidden border-t border-slate-700/60 border-b border-slate-800/80 shadow-[0_-30px_90px_rgba(0,0,0,0.95)]"
     >
+      {/* Top Subtle Amber Border Flare */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent pointer-events-none" />
+
       {/* Ambient Depth Gradients */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[350px] bg-sky-500/10 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[350px] bg-amber-500/10 blur-[150px] rounded-full pointer-events-none" />
